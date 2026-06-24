@@ -1,0 +1,16 @@
+node_modules/
+.npm-cache/
+tmp/
+
+# log
+*.log
+npm-debug.log*
+
+# Capacitor / Android build output
+android/.gradle/
+android/**/build/
+android/local.properties
+
+# Gradle
+.gradle/
+build/

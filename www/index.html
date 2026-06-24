@@ -1,0 +1,3823 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1a1612">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Secret Hitler Companion">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<title>Secret Hitler — Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Black+Ops+One&family=Limelight&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1a1612;
+  --paper: #e8dcc0;
+  --paper-dark: #d4c4a0;
+  --ink: #2a2018;
+  --liberal: #4a90a4;
+  --liberal-dark: #2c5f70;
+  --fascist: #b73a2a;
+  --fascist-dark: #8a1f12;
+  --fascist-deep: #5a0e08;
+  --communist: #b8924a;
+  --communist-dark: #6e5220;
+  --communist-deep: #3d2c10;
+  --anarchist: #2a2a2a;
+  --anarchist-dark: #0a0a0a;
+  --gold: #c9a961;
+  --gold-dark: #8a7340;
+  --shadow: rgba(0,0,0,0.6);
+  --display: 'Black Ops One', 'Limelight', serif;
+  --propaganda: 'Limelight', serif;
+  --typewriter: 'Special Elite', monospace;
+  --body: 'Crimson Text', Georgia, serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--paper);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(183,58,42,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(74,144,164,0.06) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)'/%3E%3C/svg%3E");
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  padding: 16px;
+  padding-bottom: 32px;
+  padding-top: max(16px, env(safe-area-inset-top));
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: max(32px, env(safe-area-inset-bottom));
+}
+
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3 { font-family: var(--display); letter-spacing: 0.05em; text-transform: uppercase; }
+
+.title-stack {
+  text-align: center;
+  margin: 12px 0 24px;
+  padding: 16px 0;
+  border-top: 3px double var(--paper);
+  border-bottom: 3px double var(--paper);
+  position: relative;
+}
+.title-stack::before, .title-stack::after {
+  content: '★';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--gold);
+  background: var(--bg);
+  padding: 0 8px;
+  font-size: 14px;
+}
+.title-stack::before { top: -10px; }
+.title-stack::after { bottom: -10px; }
+
+.title-stack h1 {
+  font-family: var(--propaganda);
+  font-size: 28px;
+  color: var(--paper);
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+.title-stack .subtitle {
+  font-family: var(--typewriter);
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.3em;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  font-family: var(--display);
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.08s, box-shadow 0.08s;
+  margin: 8px 0;
+  position: relative;
+}
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.btn.fascist {
+  background: var(--fascist);
+  color: var(--paper);
+  border-color: var(--fascist-deep);
+  box-shadow: 4px 4px 0 var(--fascist-deep);
+}
+.btn.fascist:active { box-shadow: 2px 2px 0 var(--fascist-deep); }
+.btn.liberal {
+  background: var(--liberal);
+  color: var(--paper);
+  border-color: var(--liberal-dark);
+  box-shadow: 4px 4px 0 var(--liberal-dark);
+}
+.btn.liberal:active { box-shadow: 2px 2px 0 var(--liberal-dark); }
+.btn.ghost {
+  background: transparent;
+  color: var(--paper);
+  border-color: var(--paper);
+  box-shadow: 4px 4px 0 var(--paper);
+}
+.btn.ghost:active { box-shadow: 2px 2px 0 var(--paper); }
+.btn.small { padding: 10px; font-size: 13px; }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ===== SCREENS ===== */
+.screen { animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== SETUP ===== */
+.player-list {
+  background: var(--paper);
+  color: var(--ink);
+  padding: 16px;
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  margin: 16px 0;
+  min-height: 80px;
+}
+.player-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 8px;
+  border-bottom: 1px dashed var(--ink);
+  font-family: var(--typewriter);
+  font-size: 16px;
+}
+.player-item:last-child { border-bottom: none; }
+.player-item .num {
+  font-family: var(--display);
+  background: var(--ink);
+  color: var(--paper);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 14px;
+}
+.player-item .name { flex: 1; }
+.player-item .del {
+  background: var(--fascist);
+  color: var(--paper);
+  border: none;
+  width: 30px;
+  height: 30px;
+  font-family: var(--display);
+  cursor: pointer;
+  font-size: 14px;
+}
+.player-empty {
+  text-align: center;
+  font-family: var(--typewriter);
+  color: var(--ink);
+  opacity: 0.6;
+  padding: 20px 0;
+}
+.room-code {
+  padding: 18px;
+  margin: 14px 0;
+  border: 3px dashed var(--gold);
+  background: var(--ink);
+  color: var(--gold);
+  text-align: center;
+  font-family: var(--display);
+  font-size: 30px;
+  letter-spacing: 0.18em;
+}
+.online-status { text-align:center; font-family:var(--typewriter); font-size:12px; color:var(--gold); margin:10px 0; }
+.online-dot { width:10px; height:10px; border-radius:50%; background:#4caf50; display:inline-block; margin-right:7px; }
+.player-list .btn.ghost {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--gold-dark);
+  box-shadow: 2px 2px 0 var(--gold-dark);
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+.input-row input {
+  flex: 1;
+  padding: 14px;
+  font-family: var(--typewriter);
+  font-size: 16px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  outline: none;
+}
+.input-row .btn { margin: 0; width: auto; padding: 14px 18px; }
+
+.info-card {
+  background: var(--paper-dark);
+  color: var(--ink);
+  padding: 12px;
+  border: 2px solid var(--ink);
+  font-family: var(--typewriter);
+  font-size: 13px;
+  margin: 12px 0;
+  text-align: center;
+  line-height: 1.5;
+}
+.info-card strong { font-family: var(--display); }
+
+/* ===== PASS PHONE ===== */
+.pass-screen {
+  text-align: center;
+  padding: 32px 16px;
+  background: var(--ink);
+  border: 3px solid var(--gold);
+  margin: 16px 0;
+  position: relative;
+}
+.pass-screen::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--gold);
+  pointer-events: none;
+}
+.pass-screen h2 {
+  font-family: var(--propaganda);
+  font-size: 22px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.pass-screen .player-name {
+  font-family: var(--typewriter);
+  font-size: 24px;
+  color: var(--paper);
+  margin: 24px 0;
+  padding: 12px;
+  border-top: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold);
+}
+.pass-screen .instruction {
+  font-family: var(--body);
+  font-style: italic;
+  color: var(--paper-dark);
+  margin: 16px 0;
+  font-size: 16px;
+}
+
+/* ===== ROLE REVEAL ===== */
+.role-card {
+  padding: 28px 20px;
+  text-align: center;
+  border: 4px solid;
+  margin: 20px 0;
+  position: relative;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: hidden;
+}
+.role-card.liberal {
+  border-color: var(--liberal-dark);
+  background: linear-gradient(135deg, #d4e4eb 0%, #a8c8d4 100%);
+}
+.role-card.fascist {
+  border-color: var(--fascist-deep);
+  background: linear-gradient(135deg, #e8a89c 0%, #c87060 100%);
+}
+.role-card.hitler {
+  border-color: #1a0a08;
+  background: linear-gradient(135deg, #4a1a12 0%, #2a0a08 100%);
+  color: var(--paper);
+}
+.role-card .role-label {
+  font-family: var(--typewriter);
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+.role-card .role-name {
+  font-family: var(--propaganda);
+  font-size: 36px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 8px 0;
+}
+.role-card .role-party {
+  font-family: var(--display);
+  font-size: 14px;
+  margin-top: 12px;
+  padding: 6px 12px;
+  display: inline-block;
+  border: 2px solid currentColor;
+}
+.role-card .role-desc {
+  font-family: var(--body);
+  font-style: italic;
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.role-card .fellow-fascists {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed currentColor;
+  font-family: var(--typewriter);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.role-card .fellow-fascists strong { font-family: var(--display); display: block; margin-bottom: 6px; }
+
+/* ===== GAME SCREEN ===== */
+.tab-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 16px;
+  background: var(--ink);
+  padding: 4px;
+  border: 2px solid var(--paper);
+}
+.tab {
+  padding: 10px 4px;
+  background: transparent;
+  color: var(--paper);
+  border: none;
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.tab.active { background: var(--paper); color: var(--ink); }
+
+/* ===== BOARD ===== */
+.board {
+  margin: 12px 0;
+  padding: 16px 12px;
+  border: 3px solid;
+  position: relative;
+}
+.board.liberal-board {
+  background: linear-gradient(180deg, #5ba0b4 0%, #3a7a8e 100%);
+  border-color: var(--liberal-dark);
+  color: var(--paper);
+}
+.board.fascist-board {
+  background: linear-gradient(180deg, #c44a3a 0%, #8a2418 100%);
+  border-color: var(--fascist-deep);
+  color: var(--paper);
+}
+.board-title {
+  font-family: var(--propaganda);
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.policy-track {
+  display: grid;
+  gap: 6px;
+}
+.liberal-board .policy-track { grid-template-columns: repeat(5, 1fr); }
+.fascist-board .policy-track { grid-template-columns: repeat(6, 1fr); }
+.policy-slot {
+  aspect-ratio: 3/4;
+  background: rgba(0,0,0,0.25);
+  border: 2px solid rgba(255,255,255,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  position: relative;
+  font-family: var(--typewriter);
+  font-size: 9px;
+  text-align: center;
+  line-height: 1.1;
+}
+.policy-slot.filled {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.liberal-board .policy-slot.filled {
+  background: linear-gradient(135deg, #e8dcc0 0%, #d4c4a0 100%);
+}
+.policy-slot.filled::after {
+  content: '★';
+  position: absolute;
+  font-size: 28px;
+  color: currentColor;
+}
+.liberal-board .policy-slot.filled::after { color: var(--liberal-dark); }
+.fascist-board .policy-slot.filled::after { color: var(--fascist-deep); }
+.communist-board .policy-slot.filled::after { content: '☭'; color: var(--communist-deep); font-size: 30px; }
+.policy-slot.anarchist-filled::after { content: 'Ⓐ'; color: #0a0a0a; }
+.policy-slot.policy-slot.filled.anti-filled::after { content: '✗'; font-size: 32px; }
+.policy-slot.policy-slot.filled.social-dem::after { content: '★'; }
+
+.board.communist-board {
+  background: linear-gradient(180deg, #c9a05e 0%, #8a6d2a 100%);
+  border-color: var(--communist-deep);
+  color: var(--paper);
+}
+.communist-board .policy-track { grid-template-columns: repeat(var(--communist-slots, 5), 1fr); }
+
+.btn.communist {
+  background: var(--communist);
+  color: var(--paper);
+  border-color: var(--communist-deep);
+  box-shadow: 4px 4px 0 var(--communist-deep);
+}
+.btn.communist:active { box-shadow: 2px 2px 0 var(--communist-deep); }
+
+.btn.anarchist {
+  background: var(--anarchist);
+  color: #c9a961;
+  border-color: #000;
+  box-shadow: 4px 4px 0 #000;
+}
+.btn.anarchist:active { box-shadow: 2px 2px 0 #000; }
+
+.role-card.communist {
+  background: linear-gradient(180deg, var(--communist) 0%, var(--communist-dark) 100%);
+  color: var(--paper);
+  border-color: var(--communist-deep);
+}
+.role-card.capitalist {
+  background: linear-gradient(180deg, #2a5a3a 0%, #1a3a25 100%);
+  color: var(--gold);
+  border-color: #0a1a10;
+}
+.role-card.anarchist {
+  background: linear-gradient(180deg, #1a1a1a 0%, #050505 100%);
+  color: #c9a961;
+  border-color: #000;
+}
+.role-card.monarchist {
+  background: linear-gradient(180deg, #4a2a5a 0%, #2a1538 100%);
+  color: var(--gold);
+  border-color: #150820;
+}
+
+.policy-slot.filled.communist-filled {
+  background: linear-gradient(135deg, #c9a05e 0%, #a07a30 100%);
+  color: var(--communist-deep);
+}
+
+/* Setup XL toggles */
+.xl-toggle-group { margin-top: 12px; }
+.xl-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  margin-bottom: 6px;
+  cursor: pointer;
+  font-family: var(--typewriter);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: left;
+}
+.xl-toggle.active {
+  background: var(--gold);
+  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+.xl-toggle.disabled { opacity: 0.4; cursor: not-allowed; }
+.xl-toggle .check {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  flex-shrink: 0;
+  margin-top: 1px;
+  text-align: center;
+  font-family: var(--display);
+  font-size: 14px;
+  line-height: 14px;
+}
+.xl-toggle.active .check { background: var(--fascist); color: var(--paper); }
+.xl-toggle .label { flex: 1; }
+.xl-toggle .label strong { display: block; font-family: var(--display); font-size: 13px; margin-bottom: 2px; }
+.xl-toggle .label .desc { font-size: 10px; opacity: 0.8; }
+
+/* Emergency powers panel */
+.emergency-panel {
+  background: var(--paper);
+  color: var(--ink);
+  padding: 12px;
+  border: 2px solid var(--ink);
+  margin: 8px 0;
+  font-family: var(--typewriter);
+  font-size: 12px;
+}
+.emergency-panel h4 {
+  font-family: var(--display);
+  font-size: 14px;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+.emergency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.emergency-pill {
+  background: var(--ink);
+  color: var(--gold);
+  padding: 6px 4px;
+  text-align: center;
+  font-family: var(--typewriter);
+  font-size: 10px;
+  border: 1px solid var(--gold);
+  cursor: pointer;
+}
+.emergency-pill.used { opacity: 0.3; text-decoration: line-through; cursor: not-allowed; }
+
+.policy-controls-xl { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 0; }
+.policy-controls-anti { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 0; }
+
+.policy-controls-xl .btn, .policy-controls-anti .btn { font-size: 11px; padding: 10px 6px; }
+
+/* Script Modal for communist powers */
+.power-script {
+  background: var(--paper);
+  color: var(--ink);
+  padding: 12px;
+  border: 2px solid var(--ink);
+  margin-top: 8px;
+  font-family: var(--typewriter);
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: left;
+}
+.power-script ol { padding-left: 22px; }
+.power-script li { margin-bottom: 4px; }
+
+.policy-slot .power-label {
+  font-size: 8px;
+  font-family: var(--display);
+  background: rgba(0,0,0,0.4);
+  color: var(--gold);
+  padding: 2px 4px;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  z-index: 1;
+}
+.policy-slot.filled .power-label { display: none; }
+.policy-slot.win {
+  background: var(--gold);
+  border-color: var(--ink);
+}
+.policy-slot.win::after { content: '☠'; color: var(--ink); }
+
+.policy-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.counter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 10px 16px;
+  border: 2px solid var(--ink);
+  margin: 8px 0;
+  font-family: var(--typewriter);
+}
+.counter-row .label { font-size: 13px; }
+.counter-row .controls { display: flex; align-items: center; gap: 10px; }
+.counter-row .controls button {
+  width: 32px;
+  height: 32px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  font-family: var(--display);
+  font-size: 16px;
+  cursor: pointer;
+}
+.counter-row .value {
+  font-family: var(--display);
+  font-size: 20px;
+  min-width: 24px;
+  text-align: center;
+}
+.tracker-pips {
+  display: flex;
+  gap: 6px;
+}
+.pip {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--paper-dark);
+  border: 2px solid var(--ink);
+}
+.pip.active { background: var(--fascist); }
+
+/* ===== VOTING ===== */
+.vote-setup {
+  background: var(--paper);
+  color: var(--ink);
+  padding: 16px;
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  margin: 12px 0;
+}
+.vote-setup h3 {
+  font-family: var(--propaganda);
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.role-pick {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0;
+}
+.role-pick label {
+  font-family: var(--typewriter);
+  font-size: 13px;
+  display: block;
+  margin-bottom: 4px;
+}
+.role-pick select, .role-pick input {
+  width: 100%;
+  padding: 10px;
+  font-family: var(--typewriter);
+  font-size: 14px;
+  background: var(--paper-dark);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+}
+
+.vote-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin: 12px 0;
+}
+.vote-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  align-items: center;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 8px 12px;
+  border: 2px solid var(--ink);
+  font-family: var(--typewriter);
+  font-size: 14px;
+}
+.vote-btn {
+  padding: 8px 14px;
+  font-family: var(--display);
+  font-size: 13px;
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  background: var(--paper-dark);
+  color: var(--ink);
+  letter-spacing: 0.05em;
+  min-width: 56px;
+}
+.vote-btn.ja.active { background: var(--liberal); color: var(--paper); border-color: var(--liberal-dark); }
+.vote-btn.nein.active { background: var(--fascist); color: var(--paper); border-color: var(--fascist-deep); }
+.vote-btn.recorded { background: var(--ink); color: var(--gold); border-color: var(--gold-dark); min-width: 116px; }
+
+.solo-vote-screen {
+  min-height: 56vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ballot-poster {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 30px 18px 24px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px double var(--ink);
+  box-shadow: 7px 7px 0 rgba(0,0,0,0.45);
+  text-align: center;
+  transform: rotate(-0.4deg);
+}
+.ballot-poster::before, .ballot-poster::after {
+  content: '';
+  position: absolute;
+  width: 90px;
+  height: 22px;
+  background: rgba(201,169,97,0.75);
+  top: 5px;
+}
+.ballot-poster::before { left: -25px; transform: rotate(-18deg); }
+.ballot-poster::after { right: -25px; transform: rotate(18deg); }
+.ballot-seal {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 10px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 3px double var(--ink);
+  background: var(--fascist);
+  color: var(--paper);
+  font-family: var(--display);
+  font-size: 34px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.ballot-headline {
+  font-family: var(--propaganda);
+  font-size: 25px;
+  letter-spacing: 0.12em;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  padding: 8px 0 6px;
+  margin-bottom: 18px;
+}
+.ballot-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ballot-actions .btn { min-height: 86px; font-size: 24px; margin: 0; }
+
+.vote-tally {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0;
+}
+.tally-box {
+  padding: 12px;
+  text-align: center;
+  border: 2px solid var(--ink);
+  font-family: var(--display);
+}
+.tally-box.ja { background: var(--liberal); color: var(--paper); }
+.tally-box.nein { background: var(--fascist); color: var(--paper); }
+.tally-box .num { font-size: 32px; line-height: 1; }
+.tally-box .lbl { font-size: 12px; letter-spacing: 0.2em; margin-top: 4px; }
+
+.vote-result {
+  text-align: center;
+  padding: 16px;
+  margin: 12px 0;
+  font-family: var(--propaganda);
+  font-size: 22px;
+  border: 3px solid var(--ink);
+  letter-spacing: 0.1em;
+}
+.vote-result.pass { background: var(--liberal); color: var(--paper); }
+.vote-result.fail { background: var(--fascist); color: var(--paper); }
+
+/* ===== DIGITAL POLICY DECK ===== */
+.legislative-screen { min-height: 82vh; display: flex; flex-direction: column; justify-content: center; }
+.policy-hand { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin: 20px 0; }
+.policy-hand.two { grid-template-columns: repeat(2, 1fr); }
+.digital-policy {
+  min-height: 190px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 3px double var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--paper);
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-align: center;
+  cursor: pointer;
+}
+.digital-policy .policy-symbol { font-size: 42px; line-height: 1; }
+.digital-policy.liberal, .digital-policy.social-dem { background: var(--liberal); }
+.digital-policy.fascist, .digital-policy.anti-communist { background: var(--fascist); }
+.digital-policy.communist, .digital-policy.anti-fascist { background: var(--communist-dark); }
+.digital-policy.anarchist { background: var(--anarchist); }
+.policy-reveal-card { width: min(270px, 82vw); min-height: 360px; margin: 18px auto; font-size: 20px; }
+.policy-reveal-card .policy-symbol { font-size: 86px; }
+.deck-counter { text-align:center; font-family:var(--typewriter); color:var(--gold); font-size:12px; margin:8px 0; }
+
+/* ===== HISTORY ===== */
+.history-entry {
+  background: var(--paper);
+  color: var(--ink);
+  padding: 12px;
+  border-left: 4px solid var(--ink);
+  margin: 8px 0;
+  font-family: var(--typewriter);
+  font-size: 13px;
+  position: relative;
+}
+.history-entry.liberal-event { border-left-color: var(--liberal-dark); }
+.history-entry.fascist-event { border-left-color: var(--fascist-dark); }
+.history-entry.communist-event { border-left-color: var(--communist-dark); }
+.history-entry .turn-num {
+  font-family: var(--display);
+  font-size: 11px;
+  color: var(--ink);
+  opacity: 0.6;
+  letter-spacing: 0.2em;
+}
+.history-entry .turn-time {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 10px;
+  opacity: 0.5;
+}
+.history-entry .turn-body {
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.history-entry .turn-body strong { font-family: var(--display); }
+
+/* ===== TIMER ===== */
+.timer-display {
+  text-align: center;
+  font-family: var(--display);
+  font-size: 64px;
+  color: var(--gold);
+  background: var(--ink);
+  border: 3px solid var(--gold);
+  padding: 24px;
+  margin: 16px 0;
+  letter-spacing: 0.05em;
+}
+.timer-display.warning { color: var(--fascist); animation: pulse 0.5s infinite alternate; }
+@keyframes pulse {
+  from { background: var(--ink); }
+  to { background: var(--fascist-deep); }
+}
+
+/* ===== MODAL ===== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  animation: fadeIn 0.2s;
+}
+.modal {
+  background: var(--paper);
+  color: var(--ink);
+  padding: 24px;
+  max-width: 400px;
+  width: 100%;
+  border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--fascist);
+}
+.modal h3 {
+  font-family: var(--propaganda);
+  font-size: 22px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.modal p {
+  font-family: var(--typewriter);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 12px 0;
+  text-align: center;
+}
+
+/* ===== STAMP ===== */
+.stamp {
+  position: absolute;
+  font-family: var(--display);
+  font-size: 14px;
+  border: 3px solid;
+  padding: 4px 10px;
+  letter-spacing: 0.1em;
+  transform: rotate(-8deg);
+  opacity: 0.85;
+}
+
+.section-label {
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin: 16px 0 8px;
+  text-align: center;
+  position: relative;
+}
+.section-label::before, .section-label::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 30%;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.4;
+}
+.section-label::before { left: 0; }
+.section-label::after { right: 0; }
+
+/* power label dynamic */
+.power-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  line-height: 16px;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 10px;
+  border: 1px solid var(--ink);
+  margin-right: 4px;
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="./vendor/peerjs.min.js"></script>
+<script>
+// ============================================================
+// SECRET HITLER — COMPANION APP
+// ============================================================
+
+// ----- STATO -----
+const state = {
+  screen: 'home',
+  tab: 'board',
+  players: [],
+  roles: {},        // playerIndex -> { role: 'liberal'|'fascist'|'hitler'|'communist'|'capitalist'|'anarchist'|'monarchist' }
+  liberalPolicies: 0,
+  fascistPolicies: 0,
+  communistPolicies: 0,
+  anarchistOnCommunistTracker: 0, // quante delle politiche sul tracker comunista sono anarchiche
+  liberalSlotsTotal: 5,           // 5 di default, 6 con opzione "liberal disadvantage"
+  electionTracker: 0,
+  president: null,
+  chancellor: null,
+  prevPresident: null,
+  prevChancellor: null,
+  votes: {},
+  pendingFascistPower: null,
+  pendingCommunistPower: null,
+  pendingCommunistPresident: null,
+  communistDeckAdditions: { communist: 0, liberal: 0 },
+  policyDeck: [],
+  discardPile: [],
+  legislative: null,
+  revealedPolicy: null,
+  revealedPolicySource: null,
+  useDigitalPolicyDeck: true,
+  turn: 0,
+  history: [],
+  reveal: { idx: 0, shown: false },
+  roleRefreshInProgress: false,
+  timer: { running: false, seconds: 60, remaining: 60 },
+  timerInterval: null,
+  // ----- OPZIONI XL -----
+  xl: {
+    communists: false,
+    capitalist: false,
+    anarchist: false,
+    monarchist: false,
+    antiPolicies: false,
+    socialDem: false,
+    emergencyPowers: false,
+    liberalTrackerLong: false,   // tracker liberale a 6 slot
+    communistShort: false,        // tracker comunista a 3 slot (per giocare comunisti senza estendere)
+  },
+  // ----- EMERGENCY POWERS POOL -----
+  emergencyArticle48: 0,    // contatori disponibili
+  emergencyEnabling: 0,
+  markedForExecution: null, // indice giocatore o null
+  executedPlayers: [],      // indici giocatori uccisi
+  vetoUnlocked: false,
+};
+
+const multiplayer = {
+  peer: null,
+  hostConnection: null,
+  connections: new Map(),
+  players: [],
+  isHost: false,
+  connected: false,
+  gameStarted: false,
+  roomCode: '',
+  playerName: '',
+  playerIndex: null,
+  privateRole: null,
+  knownPlayers: [],
+  voteSubmitted: false,
+  voteResult: null,
+  error: '',
+};
+
+// ----- CONFIG SECRET HITLER BASE (5-10) -----
+const PLAYER_CONFIG = {
+  5:  { fascists: 1, hitlerKnows: true,  powers: [null, null, 'examine', 'kill', 'kill+veto'] },
+  6:  { fascists: 1, hitlerKnows: true,  powers: [null, null, 'examine', 'kill', 'kill+veto'] },
+  7:  { fascists: 2, hitlerKnows: false, powers: [null, 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  8:  { fascists: 2, hitlerKnows: false, powers: [null, 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  9:  { fascists: 3, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  10: { fascists: 3, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  // XL (11-20). Hitler NON conosce i fascisti.
+  11: { fascists: 3, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  12: { fascists: 3, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  13: { fascists: 3, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  14: { fascists: 3, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  15: { fascists: 4, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  16: { fascists: 4, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  17: { fascists: 4, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  18: { fascists: 5, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  19: { fascists: 5, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+  20: { fascists: 5, hitlerKnows: false, powers: ['investigate', 'investigate', 'special_election', 'kill', 'kill+veto'] },
+};
+
+// ----- CONFIG COMUNISTI (numero di comunisti per N giocatori, dal PDF XL) -----
+const COMMUNIST_COUNT = {
+  5: 1, 6: 1, 7: 1, 8: 1, 9: 2, 10: 2, 11: 2, 12: 2, 13: 3,
+  14: 3, 15: 3, 16: 4, 17: 4, 18: 4, 19: 4, 20: 5
+};
+
+// ----- POTERI COMUNISTI -----
+// Per default (6-8 giocatori): tracker 5 slot — Bugging, Radicalisation, 5-year plan, Congress
+// 9-10: tracker 6 slot — Bugging, Radicalisation, 5-year plan, Congress, Confession
+// 11+: tracker 6 slot — null, Radicalisation, 5-year plan, Radicalisation, Confession
+// Comunista corto: tracker 3 slot — Confession, Radicalisation
+function getCommunistTrack(n, shortMode) {
+  if (n === 5) {
+    return { slots: 6, powers: ['bugging', 'radicalisation', 'five-year', 'congress', 'confession', null] };
+  }
+  if (shortMode) {
+    return { slots: 3, powers: [null, 'confession', 'radicalisation'] };
+  }
+  if (n <= 8) {
+    return { slots: 5, powers: ['bugging', 'radicalisation', 'five-year', 'congress', null] };
+  }
+  if (n <= 10) {
+    return { slots: 6, powers: ['bugging', 'radicalisation', 'five-year', 'congress', 'confession', null] };
+  }
+  return { slots: 6, powers: [null, 'radicalisation', 'five-year', 'radicalisation', 'confession', null] };
+}
+
+const POWER_LABELS = {
+  investigate: 'INDAGA',
+  special_election: 'ELEZ. STR.',
+  examine: 'ESAMINA 3',
+  kill: 'ESECUZIONE',
+  'kill+veto': 'ESEC. + VETO',
+  bugging: 'BUGGING',
+  radicalisation: 'RADICALIZZA',
+  'five-year': 'PIANO 5 ANNI',
+  congress: 'CONGRESSO',
+  confession: 'CONFESSIONE',
+};
+
+const POWER_DESCRIPTIONS = {
+  investigate: 'Il Presidente esamina la tessera Affiliazione di un altro giocatore',
+  special_election: 'Il Presidente nomina il prossimo Presidente',
+  examine: 'Il Presidente esamina in segreto le prossime 3 carte politica',
+  kill: 'Il Presidente esegue (uccide) un altro giocatore',
+  'kill+veto': 'Esecuzione + da ora i poteri di Veto sono attivi',
+  bugging: 'I Comunisti guardano insieme la tessera Affiliazione di un giocatore',
+  radicalisation: 'I Comunisti scambiano la tessera di un giocatore con una comunista (non Hitler / Capitalista)',
+  'five-year': 'Aggiungi 2 politiche comuniste e 1 liberale al mazzo, poi rimescola',
+  congress: 'I nuovi Comunisti scoprono chi sono i Comunisti originari',
+  confession: 'Il Presidente in carica rivela a tutti la sua tessera Affiliazione',
+};
+
+// Istruzioni "fase notte" per i poteri comunisti
+const POWER_SCRIPTS = {
+  bugging: [
+    'Tutti prendono la tessera Affiliazione e la mettono coperta davanti a sé.',
+    'Tutti chiudono gli occhi.',
+    'Comunisti aprono gli occhi.',
+    'Insieme guardano la tessera di UN giocatore.',
+    '[Pausa lunga]',
+    'Comunisti chiudono gli occhi.',
+    'Tutti muovono leggermente la propria tessera.',
+    'Tutti aprono gli occhi.',
+  ],
+  radicalisation: [
+    'Tutti prendono la tessera Affiliazione e la mettono coperta davanti a sé.',
+    'Tutti chiudono gli occhi.',
+    'Comunisti aprono gli occhi.',
+    'Scambiano la tessera di un giocatore con una tessera Comunista. La vecchia va al centro del tavolo.',
+    '[Pausa lunga]',
+    'Comunisti chiudono gli occhi.',
+    'Hitler apre gli occhi. Se la sua tessera è stata scambiata, la riscambia. Hitler NON diventa mai Comunista.',
+    'Hitler chiude gli occhi.',
+    'Capitalista (se in gioco) apre gli occhi. Se la sua tessera è stata scambiata, la riscambia. Il Capitalista NON diventa mai Comunista.',
+    'Capitalista chiude gli occhi.',
+    'Tutti muovono leggermente la propria tessera.',
+    'Tutti aprono gli occhi e controllano: se la tessera è stata scambiata, ora sono Comunisti.',
+  ],
+  'five-year': [
+    'Aggiungi 2 politiche Comuniste e 1 Liberale al mazzo da pescare.',
+    'Rimescola il mazzo.',
+  ],
+  congress: [
+    'Tutti chiudono gli occhi.',
+    'Comunisti aprono gli occhi.',
+    'I Comunisti si riconoscono fra loro (compresi quelli appena radicalizzati).',
+    'Comunisti chiudono gli occhi.',
+    'Tutti aprono gli occhi.',
+  ],
+  confession: [
+    'Il Presidente in carica rivela a tutti la propria tessera Affiliazione (Liberale, Fascista o Comunista).',
+  ],
+};
+
+// ----- UTIL -----
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+function render() {
+  const app = $('#app');
+  app.innerHTML = '';
+  let content = '';
+  switch (state.screen) {
+    case 'home': content = renderHome(); break;
+    case 'online-menu': content = renderOnlineMenu(); break;
+    case 'online-lobby': content = renderOnlineLobby(); break;
+    case 'online-role': content = renderOnlineRole(); break;
+    case 'setup': content = renderSetup(); break;
+    case 'pass-reveal': content = renderPassReveal(); break;
+    case 'role-reveal': content = renderRoleReveal(); break;
+    case 'legislative-pass-president': content = renderLegislativePass('president'); break;
+    case 'legislative-president': content = renderLegislativePresident(); break;
+    case 'legislative-pass-chancellor': content = renderLegislativePass('chancellor'); break;
+    case 'legislative-chancellor': content = renderLegislativeChancellor(); break;
+    case 'legislative-veto-president': content = renderLegislativeVetoPresident(); break;
+    case 'policy-reveal': content = renderPolicyReveal(); break;
+    case 'post-election-choice': content = renderPostElectionChoice(); break;
+    case 'game': content = renderGame(); break;
+    case 'end': content = renderEnd(); break;
+  }
+  app.innerHTML = content;
+  attachHandlers();
+}
+
+// ============================================================
+// SCREEN: HOME
+// ============================================================
+function renderHome() {
+  return `
+    <div class="screen">
+      <div class="title-stack">
+        <h1>Secret Hitler</h1>
+        <div class="subtitle">— Companion App —</div>
+      </div>
+
+      <div class="info-card">
+        Un'app per gestire le partite di <strong>Secret Hitler</strong> passandosi un solo telefono.
+        Tieni traccia di ruoli, votazioni, poteri presidenziali e cronologia dei turni.
+      </div>
+
+      <button class="btn fascist" data-action="new-game">Nuova Partita</button>
+      <button class="btn liberal" data-action="online-menu">Partita su più dispositivi</button>
+      ${hasSavedGame() ? '<button class="btn liberal" data-action="resume-game">Riprendi Partita</button>' : ''}
+      <button class="btn ghost" data-action="rules">Regole Rapide</button>
+
+      <div class="section-label">5 – 20 Giocatori · XL</div>
+
+      <div style="text-align:center; font-family:var(--typewriter); font-size:11px; color:var(--gold); opacity:0.7; margin-top:24px; line-height:1.6;">
+        Berlino · 1932<br>
+        ★ ★ ★
+      </div>
+    </div>
+  `;
+}
+
+function renderOnlineMenu() {
+  return `
+    <div class="screen">
+      <div class="title-stack"><h1>Partita Online</h1><div class="subtitle">— Peer to Peer —</div></div>
+      <div class="role-pick">
+        <label>IL TUO NOME</label>
+        <input id="online-name" type="text" maxlength="20" placeholder="Nome giocatore" value="${escapeHtml(multiplayer.playerName)}">
+      </div>
+      <button class="btn fascist" data-action="create-online-room">Crea stanza</button>
+      <div class="section-label">Oppure entra</div>
+      <div class="role-pick">
+        <label>CODICE STANZA</label>
+        <input id="online-room-code" type="text" maxlength="6" placeholder="ABC123" style="text-transform:uppercase;">
+      </div>
+      <button class="btn liberal" data-action="join-online-room">Entra nella stanza</button>
+      ${multiplayer.error ? `<div class="info-card" style="background:var(--fascist);color:var(--paper);">${escapeHtml(multiplayer.error)}</div>` : ''}
+      <button class="btn ghost" data-action="home">Indietro</button>
+    </div>`;
+}
+
+function renderOnlineLobby() {
+  return `
+    <div class="screen">
+      <div class="title-stack"><h1>Giocatori</h1><div class="subtitle">— Stanza Online —</div></div>
+      <div class="room-code">${escapeHtml(multiplayer.roomCode || '------')}</div>
+      <div class="online-status"><span class="online-dot"></span>${multiplayer.connected ? 'Connesso' : 'Connessione…'}</div>
+      <div class="player-list">
+        ${multiplayer.players.length ? multiplayer.players.map((p, i) => `
+          <div class="player-item"><div class="num">${i + 1}</div><div class="name">${escapeHtml(p.name)}${p.host ? ' · HOST' : ''}</div></div>
+        `).join('') : '<div class="player-empty">In attesa dei giocatori…</div>'}
+      </div>
+      ${multiplayer.isHost ? '<button class="btn fascist" data-action="online-configure">Configura e avvia</button>' : '<div class="info-card">L’host configurerà la partita quando tutti saranno entrati.</div>'}
+      <button class="btn ghost" data-action="leave-online-room">Esci dalla stanza</button>
+    </div>`;
+}
+
+function renderOnlineRole() {
+  const role = multiplayer.privateRole || 'liberal';
+  const data = {
+    liberal: ['liberal', 'LIBERALE'], fascist: ['fascist', 'FASCISTA'], hitler: ['hitler', 'HITLER'],
+    communist: ['communist', 'COMUNISTA'], capitalist: ['capitalist', 'CAPITALISTA'],
+    anarchist: ['anarchist', 'ANARCHICO'], monarchist: ['monarchist', 'MONARCHICO']
+  }[role] || ['liberal', String(role).toUpperCase()];
+  return `
+    <div class="screen">
+      <div class="role-card ${data[0]}">
+        <div class="role-label">Il tuo ruolo</div><div class="role-name">${data[1]}</div>
+        ${multiplayer.knownPlayers.length ? `<div class="fellow-fascists"><strong>Conosci</strong>${multiplayer.knownPlayers.map(escapeHtml).join('<br>')}</div>` : ''}
+      </div>
+      <button class="btn ghost" data-action="online-role-ready">Ho memorizzato</button>
+    </div>`;
+}
+
+function hasSavedGame() {
+  try { return !!localStorage.getItem('sh_save'); } catch(e) { return false; }
+}
+
+function makeRoomCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length: 6}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+function publicGameSnapshot() {
+  const aliveCount = state.players.length - state.executedPlayers.length;
+  const ja = Object.values(state.votes).filter(v => v === 'ja').length;
+  const nein = Object.values(state.votes).filter(v => v === 'nein').length;
+  const allVoted = aliveCount > 0 && ja + nein === aliveCount;
+  return {
+    players: state.players, liberalPolicies: state.liberalPolicies, fascistPolicies: state.fascistPolicies,
+    communistPolicies: state.communistPolicies, anarchistOnCommunistTracker: state.anarchistOnCommunistTracker,
+    liberalSlotsTotal: state.liberalSlotsTotal, electionTracker: state.electionTracker, turn: state.turn,
+    history: state.history, xl: state.xl, pendingFascistPower: state.pendingFascistPower,
+    pendingCommunistPower: state.pendingCommunistPower, executedPlayers: state.executedPlayers,
+    markedForExecution: state.markedForExecution, vetoUnlocked: state.vetoUnlocked,
+    policyDeckCount: state.policyDeck.length, discardCount: state.discardPile.length,
+    endResult: state.endResult, endReason: state.endReason,
+    voteResult: allVoted ? { ja, nein, passed: ja > nein } : null,
+  };
+}
+
+function applyPublicGameSnapshot(snapshot) {
+  const previousResult = multiplayer.voteResult;
+  const fields = ['players','liberalPolicies','fascistPolicies','communistPolicies','anarchistOnCommunistTracker','liberalSlotsTotal','electionTracker','turn','history','xl','pendingFascistPower','pendingCommunistPower','executedPlayers','markedForExecution','vetoUnlocked','endResult','endReason'];
+  fields.forEach(key => { if (snapshot[key] !== undefined) state[key] = snapshot[key]; });
+  state.policyDeck = Array(snapshot.policyDeckCount || 0).fill('hidden');
+  state.discardPile = Array(snapshot.discardCount || 0).fill('hidden');
+  multiplayer.voteResult = snapshot.voteResult || null;
+  if (previousResult && !multiplayer.voteResult) multiplayer.voteSubmitted = false;
+  if (state.endResult) state.screen = 'end';
+  else if (state.screen !== 'online-role') { state.screen = 'game'; state.tab = state.tab || 'board'; }
+}
+
+function broadcastLobby() {
+  if (!multiplayer.isHost) return;
+  const message = { type: 'lobby', roomCode: multiplayer.roomCode, players: multiplayer.players };
+  multiplayer.connections.forEach(conn => { if (conn.open) conn.send(message); });
+  render();
+}
+
+function broadcastGameState() {
+  if (!multiplayer.isHost || !multiplayer.gameStarted) return;
+  const message = { type: 'state', snapshot: publicGameSnapshot() };
+  multiplayer.connections.forEach(conn => { if (conn.open) conn.send(message); });
+}
+
+function privateRoleInfo(idx) {
+  const role = state.roles[idx]?.role || 'liberal';
+  const n = state.players.length;
+  let known = [];
+  if (role === 'fascist' || role === 'monarchist') {
+    known = Object.entries(state.roles).filter(([i, r]) => +i !== idx && ['fascist','hitler','monarchist'].includes(r.role)).map(([i]) => state.players[+i]);
+  } else if (role === 'hitler' && PLAYER_CONFIG[n]?.hitlerKnows) {
+    known = Object.entries(state.roles).filter(([i, r]) => +i !== idx && ['fascist','monarchist'].includes(r.role)).map(([i]) => state.players[+i]);
+  } else if ((role === 'communist' || role === 'anarchist') && state.xl.communists && n >= 11) {
+    known = Object.entries(state.roles).filter(([i, r]) => +i !== idx && ['communist','anarchist'].includes(r.role)).map(([i]) => state.players[+i]);
+  }
+  return { role, known };
+}
+
+function sendOnlineGameStart() {
+  multiplayer.gameStarted = true;
+  multiplayer.playerIndex = 0;
+  const own = privateRoleInfo(0);
+  multiplayer.privateRole = own.role;
+  multiplayer.knownPlayers = own.known;
+  multiplayer.players.forEach((player, idx) => {
+    if (idx === 0) return;
+    const conn = multiplayer.connections.get(player.id);
+    if (conn?.open) conn.send({ type: 'game-start', playerIndex: idx, private: privateRoleInfo(idx), snapshot: publicGameSnapshot() });
+  });
+  state.screen = 'online-role';
+}
+
+function handleHostData(conn, data) {
+  if (!data || typeof data !== 'object') return;
+  if (data.type === 'join') {
+    const name = String(data.name || 'Giocatore').trim().slice(0, 20);
+    if (!multiplayer.players.some(p => p.id === conn.peer)) multiplayer.players.push({ id: conn.peer, name, host: false });
+    broadcastLobby();
+  } else if (data.type === 'vote' && multiplayer.gameStarted) {
+    const idx = multiplayer.players.findIndex(p => p.id === conn.peer);
+    if (idx >= 0 && !state.executedPlayers.includes(idx) && state.votes[idx] === undefined) {
+      state.votes[idx] = data.vote === 'nein' ? 'nein' : 'ja';
+      saveGame();
+      broadcastGameState();
+    }
+  }
+}
+
+function connectAsHost(name) {
+  if (typeof Peer === 'undefined') { multiplayer.error = 'Modulo rete non disponibile.'; render(); return; }
+  multiplayer.roomCode = makeRoomCode();
+  multiplayer.playerName = name;
+  multiplayer.isHost = true;
+  multiplayer.peer = new Peer(`sh-${multiplayer.roomCode.toLowerCase()}`);
+  multiplayer.peer.on('open', id => {
+    multiplayer.connected = true;
+    multiplayer.players = [{ id, name, host: true }];
+    state.screen = 'online-lobby'; render();
+  });
+  multiplayer.peer.on('connection', conn => {
+    multiplayer.connections.set(conn.peer, conn);
+    conn.on('data', data => handleHostData(conn, data));
+    conn.on('close', () => { multiplayer.connections.delete(conn.peer); multiplayer.players = multiplayer.players.filter(p => p.id !== conn.peer); broadcastLobby(); });
+  });
+  multiplayer.peer.on('error', () => { multiplayer.error = 'Impossibile creare la stanza. Riprova.'; state.screen = 'online-menu'; render(); });
+}
+
+function connectAsGuest(name, code) {
+  if (typeof Peer === 'undefined') { multiplayer.error = 'Modulo rete non disponibile.'; render(); return; }
+  multiplayer.roomCode = code;
+  multiplayer.playerName = name;
+  multiplayer.isHost = false;
+  multiplayer.peer = new Peer();
+  multiplayer.peer.on('open', () => {
+    const conn = multiplayer.peer.connect(`sh-${code.toLowerCase()}`, { reliable: true });
+    multiplayer.hostConnection = conn;
+    conn.on('open', () => { multiplayer.connected = true; conn.send({ type: 'join', name }); state.screen = 'online-lobby'; render(); });
+    conn.on('data', data => {
+      if (data.type === 'lobby') { multiplayer.players = data.players || []; state.screen = 'online-lobby'; render(); }
+      if (data.type === 'game-start') {
+        multiplayer.gameStarted = true; multiplayer.playerIndex = data.playerIndex;
+        multiplayer.privateRole = data.private.role; multiplayer.knownPlayers = data.private.known || [];
+        applyPublicGameSnapshot(data.snapshot); state.screen = 'online-role'; render();
+      }
+      if (data.type === 'state') { applyPublicGameSnapshot(data.snapshot); render(); }
+    });
+    conn.on('close', () => { multiplayer.connected = false; multiplayer.error = 'Connessione con l’host terminata.'; state.screen = 'online-menu'; render(); });
+  });
+  multiplayer.peer.on('error', () => { multiplayer.error = 'Stanza non trovata o connessione non disponibile.'; state.screen = 'online-menu'; render(); });
+}
+
+function leaveOnlineRoom() {
+  try { multiplayer.peer?.destroy(); } catch (_) {}
+  multiplayer.peer = null; multiplayer.hostConnection = null; multiplayer.connections.clear();
+  multiplayer.players = []; multiplayer.connected = false; multiplayer.gameStarted = false;
+  multiplayer.isHost = false; multiplayer.roomCode = ''; multiplayer.privateRole = null;
+  state.screen = 'home'; render();
+}
+
+// ============================================================
+// SCREEN: SETUP
+// ============================================================
+function renderSetup() {
+  const count = state.players.length;
+  const valid = count >= 5 && count <= 20;
+  const config = PLAYER_CONFIG[count];
+  const canCommunists = count >= 5;
+  const xl = state.xl;
+  const canCommunistShort = xl.communists && count > 5;
+
+  // Anteprima distribuzione ruoli
+  let breakdown = '';
+  if (config) {
+    const fas = config.fascists;
+    const com = xl.communists && canCommunists ? COMMUNIST_COUNT[count] || 0 : 0;
+    const libs = count - 1 - fas - com;
+    breakdown = `
+      <strong>${count} GIOCATORI</strong><br>
+      1 Hitler · ${fas} Fascist${fas > 1 ? 'i' : 'a'}${com > 0 ? ` · ${com} Comunist${com > 1 ? 'i' : 'a'}` : ''} · ${libs} Liberal${libs > 1 ? 'i' : 'e'}<br>
+      ${config.hitlerKnows ? 'Hitler conosce i Fascisti' : 'Hitler NON conosce i Fascisti'}
+      ${xl.communists && count >= 11 ? '<br>I Comunisti si riconoscono a inizio partita' : ''}
+    `;
+  }
+
+  return `
+    <div class="screen">
+      <div class="title-stack">
+        <h1>Inscrivi Giocatori</h1>
+        <div class="subtitle">— 5 a 20 · XL —</div>
+      </div>
+
+      <div class="input-row">
+        <input type="text" id="player-name" placeholder="Nome giocatore" maxlength="20" autocomplete="off">
+        <button class="btn fascist" data-action="add-player">+</button>
+      </div>
+
+      <div class="player-list">
+        ${count === 0
+          ? '<div class="player-empty">Nessun giocatore. Aggiungine almeno 5.</div>'
+          : state.players.map((p, i) => `
+              <div class="player-item">
+                <div class="num">${i + 1}</div>
+                <div class="name">${escapeHtml(p)}</div>
+                <button class="del" data-action="remove-player" data-idx="${i}">✕</button>
+              </div>
+            `).join('')
+        }
+      </div>
+
+      ${config ? `
+        <div class="info-card">${breakdown}</div>
+      ` : `
+        <div class="info-card">Servono da 5 a 20 giocatori per giocare.</div>
+      `}
+
+      <div class="section-label">Espansione XL</div>
+      <div class="info-card" style="font-size:11px; text-align:left;">
+        Attiva/disattiva regole opzionali. I Capitalista e Anarchico (versione comunista) richiedono i Comunisti.
+      </div>
+
+      <div class="xl-toggle-group">
+        <div class="xl-toggle ${xl.communists ? 'active' : ''} ${canCommunists ? '' : 'disabled'}" data-action="xl-toggle" data-key="communists">
+          <span class="check">${xl.communists ? '✓' : ''}</span>
+          <span class="label">
+            <strong>☭ Comunisti</strong>
+            <span class="desc">Terzo partito. Vince con 5/6 politiche comuniste o uccidendo Hitler (con i Liberali).</span>
+          </span>
+        </div>
+
+        <div class="xl-toggle ${xl.communistShort && count > 5 ? 'active' : ''} ${canCommunistShort ? '' : 'disabled'}" data-action="xl-toggle" data-key="communistShort">
+          <span class="check">${xl.communistShort ? '✓' : ''}</span>
+          <span class="label">
+            <strong>Comunisti Corto</strong>
+            <span class="desc">Tracker comunista a 3 slot + tracker liberale a 3. Comunisti senza estendere la partita.</span>
+          </span>
+        </div>
+
+        <div class="xl-toggle ${xl.capitalist ? 'active' : ''} ${xl.communists ? '' : 'disabled'}" data-action="xl-toggle" data-key="capitalist">
+          <span class="check">${xl.capitalist ? '✓' : ''}</span>
+          <span class="label">
+            <strong>💰 Capitalista</strong>
+            <span class="desc">Ruolo segreto. Vince se né Comunisti né Anarchico vincono. Se ucciso, +1 politica comunista nel mazzo.</span>
+          </span>
+        </div>
+
+        <div class="xl-toggle ${xl.anarchist ? 'active' : ''}" data-action="xl-toggle" data-key="anarchist">
+          <span class="check">${xl.anarchist ? '✓' : ''}</span>
+          <span class="label">
+            <strong>Ⓐ Anarchico</strong>
+            <span class="desc">${xl.communists ? 'Squadra comunista. Vince se i Comunisti vincono con 2 politiche anarchiche sul tracker, o se Hitler viene ucciso.' : 'Vince se una politica anarchica viene promulgata via election tracker.'}</span>
+          </span>
+        </div>
+
+        <div class="xl-toggle ${xl.monarchist ? 'active' : ''}" data-action="xl-toggle" data-key="monarchist">
+          <span class="check">${xl.monarchist ? '✓' : ''}</span>
+          <span class="label">
+            <strong>♛ Monarchico</strong>
+            <span class="desc">Sostituisce un Fascista. Vince se i Fascisti vincono SENZA che Hitler diventi Cancelliere dopo la 3ª fascista.</span>
+          </span>
+        </div>
+
+        <div class="xl-toggle ${xl.antiPolicies ? 'active' : ''}" data-action="xl-toggle" data-key="antiPolicies">
+          <span class="check">${xl.antiPolicies ? '✓' : ''}</span>
+          <span class="label">
+            <strong>⚖ Anti-Policies</strong>
+            <span class="desc">Politiche speciali Anti-Fasciste / Anti-Comuniste / Social-Dem (rimuovono politiche dal tracker avversario).</span>
+          </span>
+        </div>
+
+        <div class="xl-toggle ${xl.emergencyPowers ? 'active' : ''}" data-action="xl-toggle" data-key="emergencyPowers">
+          <span class="check">${xl.emergencyPowers ? '✓' : ''}</span>
+          <span class="label">
+            <strong>⚡ Emergency Powers</strong>
+            <span class="desc">Article 48 (Presidente) + Enabling Act (Cancelliere). 1 carta per ogni giocatore oltre 10 (2 oltre 13 con Comunisti). Max 6 totali.</span>
+          </span>
+        </div>
+
+        <div class="xl-toggle ${xl.liberalTrackerLong ? 'active' : ''}" data-action="xl-toggle" data-key="liberalTrackerLong">
+          <span class="check">${xl.liberalTrackerLong ? '✓' : ''}</span>
+          <span class="label">
+            <strong>★ Tracker Liberale a 6</strong>
+            <span class="desc">Dà un (lieve) svantaggio ai Liberali e allunga la partita.</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="section-label">Mazzo Politiche</div>
+      <div class="xl-toggle ${state.useDigitalPolicyDeck ? 'active' : ''}" data-action="deck-mode-toggle">
+        <span class="check">${state.useDigitalPolicyDeck ? '✓' : ''}</span>
+        <span class="label">
+          <strong>${state.useDigitalPolicyDeck ? 'Mazzo interno all’app' : 'Mazzo fisico'}</strong>
+          <span class="desc">${state.useDigitalPolicyDeck ? 'Pescata, scarti e rimescolo gestiti automaticamente.' : 'Dopo il voto scegli se usare la pescata digitale o proseguire senza selezionare carte.'}</span>
+        </span>
+      </div>
+
+      <button class="btn fascist" data-action="start-roles" ${valid ? '' : 'disabled'}>Assegna Ruoli</button>
+      <button class="btn ghost" data-action="home">← Indietro</button>
+    </div>
+  `;
+}
+
+// ============================================================
+// SCREEN: PASS PHONE (per rivelare ruoli)
+// ============================================================
+function renderPassReveal() {
+  const idx = state.reveal.idx;
+  const player = state.players[idx];
+  return `
+    <div class="screen">
+      <div class="title-stack">
+        <h1>Riservato</h1>
+        <div class="subtitle">— ${state.roleRefreshInProgress ? 'Aggiornamento Ruoli' : 'Distribuzione Ruoli'} —</div>
+      </div>
+
+      <div class="pass-screen">
+        <h2>Passa il telefono a</h2>
+        <div class="player-name">${escapeHtml(player)}</div>
+        <div class="instruction">
+          Tieni il telefono nascosto agli altri,<br>poi tocca per scoprire il tuo ruolo.
+        </div>
+      </div>
+
+      <button class="btn fascist" data-action="show-role">Sono ${escapeHtml(player)}</button>
+
+      <div style="text-align:center; font-family:var(--typewriter); font-size:11px; color:var(--gold); margin-top:12px;">
+        ${idx + 1} di ${state.players.length}
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// SCREEN: ROLE REVEAL
+// ============================================================
+function renderRoleReveal() {
+  const idx = state.reveal.idx;
+  const player = state.players[idx];
+  const role = state.roles[idx].role;
+  const config = PLAYER_CONFIG[state.players.length];
+  const n = state.players.length;
+
+  let fellowInfo = '';
+  if (role === 'fascist' || role === 'monarchist') {
+    const fascistTeammates = Object.entries(state.roles)
+      .filter(([i, r]) => parseInt(i) !== idx && (r.role === 'fascist' || r.role === 'hitler' || r.role === 'monarchist'))
+      .map(([i, r]) => {
+        let tag = '';
+        if (r.role === 'hitler') tag = '(HITLER)';
+        else if (r.role === 'monarchist') tag = '(Monarchico)';
+        else tag = '(Fascista)';
+        return `${state.players[i]} ${tag}`;
+      });
+    fellowInfo = `
+      <div class="fellow-fascists">
+        <strong>I tuoi alleati</strong>
+        ${fascistTeammates.length ? fascistTeammates.join('<br>') : 'Sei solo'}
+      </div>
+    `;
+  } else if (role === 'hitler' && config.hitlerKnows) {
+    const fascists = Object.entries(state.roles)
+      .filter(([i, r]) => parseInt(i) !== idx && (r.role === 'fascist' || r.role === 'monarchist'))
+      .map(([i, r]) => state.players[i]);
+    fellowInfo = `
+      <div class="fellow-fascists">
+        <strong>Il tuo Fascista</strong>
+        ${fascists.join('<br>')}
+      </div>
+    `;
+  } else if (role === 'hitler' && !config.hitlerKnows) {
+    fellowInfo = `
+      <div class="fellow-fascists">
+        <strong>Sei solo</strong>
+        I Fascisti ti conoscono.<br>Tu non sai chi sono loro.
+      </div>
+    `;
+  } else if (role === 'communist' && n >= 11) {
+    const communists = Object.entries(state.roles)
+      .filter(([i, r]) => parseInt(i) !== idx && (r.role === 'communist' || r.role === 'anarchist'))
+      .map(([i, r]) => `${state.players[i]} ${r.role === 'anarchist' ? '(Anarchico)' : '(Comunista)'}`);
+    fellowInfo = `
+      <div class="fellow-fascists">
+        <strong>I tuoi Compagni</strong>
+        ${communists.length ? communists.join('<br>') : 'Sei solo'}
+      </div>
+    `;
+  } else if (role === 'communist' && n < 11) {
+    fellowInfo = `
+      <div class="fellow-fascists">
+        <strong>Riconoscimento</strong>
+        Non conosci ancora gli altri Comunisti. Vi riconoscerete col potere "Congresso".
+      </div>
+    `;
+  } else if (role === 'anarchist' && state.xl.communists && n >= 11) {
+    const communists = Object.entries(state.roles)
+      .filter(([i, r]) => parseInt(i) !== idx && (r.role === 'communist' || r.role === 'anarchist'))
+      .map(([i, r]) => `${state.players[i]} ${r.role === 'anarchist' ? '(Anarchico)' : '(Comunista)'}`);
+    fellowInfo = `
+      <div class="fellow-fascists">
+        <strong>I tuoi Compagni</strong>
+        ${communists.length ? communists.join('<br>') : 'Sei solo'}
+      </div>
+    `;
+  }
+
+  const roleData = {
+    liberal: {
+      class: 'liberal',
+      label: 'Sei un',
+      name: 'Liberale',
+      party: 'Partito Liberale',
+      desc: `Difendi la democrazia. Approva ${state.liberalSlotsTotal} politiche liberali o elimina Hitler.`
+    },
+    fascist: {
+      class: 'fascist',
+      label: 'Sei un',
+      name: 'Fascista',
+      party: 'Partito Fascista',
+      desc: 'Sabota la repubblica. Approva 6 politiche fasciste o eleggi Hitler Cancelliere dopo la 3ª politica fascista.'
+    },
+    hitler: {
+      class: 'hitler',
+      label: 'Tu sei',
+      name: 'Hitler',
+      party: 'Partito Fascista',
+      desc: 'Nasconditi tra i Liberali. Se vieni eletto Cancelliere dopo la 3ª politica fascista, vincete.'
+    },
+    communist: {
+      class: 'communist',
+      label: 'Sei un',
+      name: 'Comunista',
+      party: '☭ Partito Comunista',
+      desc: 'Riempi il tracker comunista, o assassina Hitler (vinci insieme ai Liberali).'
+    },
+    capitalist: {
+      class: 'capitalist',
+      label: 'Sei il',
+      name: 'Capitalista',
+      party: '💰 Ruolo Segreto',
+      desc: 'Vinci se NÉ Comunisti NÉ Anarchico vincono (alleato di Liberali/Fascisti). Se ti uccidono, una politica comunista in più entra nel mazzo.'
+    },
+    anarchist: {
+      class: 'anarchist',
+      label: 'Sei un',
+      name: 'Anarchico',
+      party: 'Ⓐ Ruolo Segreto',
+      desc: state.xl.communists
+        ? 'Squadra Comunisti. Vinci se i Comunisti vincono con 2 politiche anarchiche sul tracker, o se Hitler viene assassinato.'
+        : 'Vinci se una politica anarchica viene promulgata via election tracker.'
+    },
+    monarchist: {
+      class: 'monarchist',
+      label: 'Sei il',
+      name: 'Monarchico',
+      party: '♛ Partito Fascista (defilato)',
+      desc: 'Vinci se i Fascisti vincono SENZA che Hitler diventi Cancelliere dopo la 3ª fascista. Perdi se Hitler viene ucciso.'
+    },
+  };
+  const r = roleData[role];
+
+  return `
+    <div class="screen">
+      <div class="role-card ${r.class}">
+        <div class="role-label">${r.label}</div>
+        <div class="role-name">${r.name}</div>
+        <div class="role-party">${r.party}</div>
+        <div class="role-desc">${r.desc}</div>
+        ${fellowInfo}
+      </div>
+
+      <div class="info-card" style="background: var(--ink); color: var(--gold); border-color: var(--gold);">
+        ⚠ Memorizza il tuo ruolo, poi tocca per nasconderlo
+      </div>
+
+      <button class="btn ghost" data-action="hide-role">Ho memorizzato — Avanti</button>
+    </div>
+  `;
+}
+
+// ============================================================
+// SCREEN: GAME (Board / Vote / History / Timer)
+// ============================================================
+function renderGame() {
+  return `
+    <div class="screen">
+      <div class="title-stack">
+        <h1>Turno ${state.turn + 1}</h1>
+        <div class="subtitle">— ${state.players.length} Giocatori —</div>
+      </div>
+
+      <div class="tab-bar">
+        <button class="tab ${state.tab === 'board' ? 'active' : ''}" data-action="tab" data-tab="board">Board</button>
+        <button class="tab ${state.tab === 'vote' ? 'active' : ''}" data-action="tab" data-tab="vote">Voto</button>
+        <button class="tab ${state.tab === 'history' ? 'active' : ''}" data-action="tab" data-tab="history">Storia</button>
+        <button class="tab ${state.tab === 'timer' ? 'active' : ''}" data-action="tab" data-tab="timer">Timer</button>
+      </div>
+
+      ${state.tab === 'board' ? renderBoard() : ''}
+      ${state.tab === 'vote' ? renderVote() : ''}
+      ${state.tab === 'history' ? renderHistory() : ''}
+      ${state.tab === 'timer' ? renderTimer() : ''}
+
+      <button class="btn ghost small" data-action="menu" style="margin-top:24px;">Menu Partita</button>
+    </div>
+  `;
+}
+
+function renderBoard() {
+  const n = state.players.length;
+  const config = PLAYER_CONFIG[n];
+  const powers = config.powers;
+  const xl = state.xl;
+  const libSlots = state.liberalSlotsTotal;
+
+  // Libera board: 5 (default) o 6 slot (opzione disadvantage). Ultimo = vittoria.
+  let liberalSlots = '';
+  for (let i = 0; i < libSlots; i++) {
+    const filled = i < state.liberalPolicies;
+    const isWin = i === libSlots - 1;
+    liberalSlots += `<div class="policy-slot ${filled ? 'filled' : ''}">${isWin && !filled ? '<div class="power-label">VITTORIA</div>' : ''}</div>`;
+  }
+
+  // Fascista: 6 slot. 3a = caos (Hitler win zone), 6a = vittoria
+  let fascistSlots = '';
+  for (let i = 0; i < 6; i++) {
+    const filled = i < state.fascistPolicies;
+    const power = i < 5 ? powers[i] : null;
+    let label = '';
+    if (i === 2) label = 'CAOS';
+    if (i === 5) label = 'VITTORIA';
+    else if (power) label = POWER_LABELS[power];
+    fascistSlots += `<div class="policy-slot ${filled ? 'filled' : ''}">${!filled && label ? `<div class="power-label">${label}</div>` : ''}</div>`;
+  }
+
+  // Comunista (se attivo)
+  let communistBoard = '';
+  if (xl.communists) {
+    const track = getCommunistTrack(n, xl.communistShort);
+    let communistSlots = '';
+    for (let i = 0; i < track.slots; i++) {
+      const filled = i < state.communistPolicies;
+      const isWin = i === track.slots - 1;
+      const power = track.powers[i];
+      let label = '';
+      if (isWin) label = 'VITTORIA';
+      else if (power) label = POWER_LABELS[power];
+      communistSlots += `<div class="policy-slot communist-filled ${filled ? 'filled' : ''}">${!filled && label ? `<div class="power-label">${label}</div>` : ''}</div>`;
+    }
+    communistBoard = `
+      <div class="board communist-board" style="--communist-slots:${track.slots};">
+        <div class="board-title">☭ Politiche Comuniste ☭</div>
+        <div class="policy-track">${communistSlots}</div>
+      </div>
+    `;
+  }
+
+  // Election tracker pips
+  let pips = '';
+  for (let i = 0; i < 3; i++) {
+    pips += `<div class="pip ${i < state.electionTracker ? 'active' : ''}"></div>`;
+  }
+
+  // Potere fascista in attesa: resta disponibile finche non viene eseguito.
+  const nextPower = state.pendingFascistPower;
+  let fascistHint = '';
+  if (nextPower) {
+    fascistHint = `
+      <div class="info-card" style="margin-top:8px;">
+        <strong>Potere Fascista da eseguire: ${POWER_LABELS[nextPower]}</strong><br>
+        ${POWER_DESCRIPTIONS[nextPower]}
+        <br><button class="btn fascist small" data-action="activate-fascist-power" data-power="${nextPower}" style="margin-top:10px;">Attiva dal telefono</button>
+      </div>
+    `;
+  }
+
+  // Potere comunista in attesa: resta disponibile finche non viene eseguito.
+  let communistHint = '';
+  if (xl.communists && state.pendingCommunistPower) {
+    const cPower = state.pendingCommunistPower;
+    communistHint = `
+      <div class="info-card" style="background:var(--communist-dark); color:var(--paper); border-color:var(--communist-deep);">
+        <strong>Potere Comunista da eseguire: ${POWER_LABELS[cPower]}</strong><br>
+        ${POWER_DESCRIPTIONS[cPower]}
+        <br><button class="btn communist small" data-action="activate-communist-power" data-power="${cPower}" style="margin-top:10px;">Attiva dal telefono</button>
+        <button class="btn ghost small" data-action="show-power-script" data-power="${cPower}" style="margin-top:8px;">Mostra regole complete</button>
+      </div>
+    `;
+  }
+  const communistDeckHint = xl.communists && (state.communistDeckAdditions.communist || state.communistDeckAdditions.liberal) ? `
+    <div class="info-card" style="font-size:11px;">
+      Piano quinquennale registrato nel mazzo: +${state.communistDeckAdditions.communist} Comuniste, +${state.communistDeckAdditions.liberal} Liberali.
+    </div>
+  ` : '';
+
+  // Hint Hitler vittoria
+  const hitlerWinHint = state.fascistPolicies >= 3 ? `
+    <div class="info-card" style="background:var(--fascist-deep); color:var(--paper); border-color:var(--gold);">
+      ⚠ Se Hitler viene eletto Cancelliere ora, <strong>i Fascisti vincono</strong>
+    </div>
+  ` : '';
+
+  // Pulsanti aggiunta politiche
+  const policyButtons = xl.communists ? `
+    <div class="policy-controls-xl">
+      <button class="btn liberal small" data-action="add-policy" data-type="liberal">+ Liberale</button>
+      <button class="btn fascist small" data-action="add-policy" data-type="fascist">+ Fascista</button>
+      <button class="btn communist small" data-action="add-policy" data-type="communist">+ Comunista</button>
+    </div>
+  ` : `
+    <div class="policy-controls">
+      <button class="btn liberal small" data-action="add-policy" data-type="liberal">+ Liberale</button>
+      <button class="btn fascist small" data-action="add-policy" data-type="fascist">+ Fascista</button>
+    </div>
+  `;
+
+  // Anti-policies
+  const antiButtons = xl.antiPolicies ? `
+    <div class="section-label" style="margin-top:14px;">⚖ Anti-Policies</div>
+    <div class="policy-controls-anti">
+      ${xl.communists ? `<button class="btn fascist small" data-action="add-policy" data-type="anti-communist">Anti-Com →F</button>` : ''}
+      ${xl.communists ? `<button class="btn communist small" data-action="add-policy" data-type="anti-fascist">Anti-Fas →C</button>` : ''}
+      <button class="btn liberal small" data-action="add-policy" data-type="social-dem">Social-Dem →L</button>
+    </div>
+    <div class="info-card" style="font-size:11px;">
+      Anti-Com va sul tracker Fascista e rimuove 1 politica dal Comunista. Anti-Fas va sul tracker Comunista e rimuove 1 Fascista. Social-Dem va sul Liberale e rimuove una Fascista o Comunista. In tutti i casi: nessun potere viene riusato.
+    </div>
+  ` : '';
+
+  // Anarchist policy (modalità senza comunisti)
+  const anarchistButton = (xl.anarchist && !xl.communists) ? `
+    <div class="section-label" style="margin-top:14px;">Ⓐ Anarchica</div>
+    <button class="btn anarchist small" data-action="add-policy" data-type="anarchist">+ Politica Anarchica (via tracker)</button>
+    <div class="info-card" style="font-size:11px;">Promulgata via election tracker → vittoria Anarchico.</div>
+  ` : '';
+
+  // Emergency Powers
+  const emergencyPanel = xl.emergencyPowers ? renderEmergencyPanel() : '';
+
+  // Marked for execution warning
+  const markedHint = state.markedForExecution !== null ? `
+    <div class="info-card" style="background:var(--fascist-deep); color:var(--paper); border-color:var(--gold);">
+      🎯 ${escapeHtml(state.players[state.markedForExecution])} è <strong>marcato per esecuzione</strong>. Verrà ucciso dopo 3 ulteriori politiche fasciste promulgate da ora.
+    </div>
+  ` : '';
+
+  return `
+    <div class="board liberal-board">
+      <div class="board-title">★ Politiche Liberali ★</div>
+      <div class="policy-track" style="grid-template-columns: repeat(${libSlots}, 1fr);">${liberalSlots}</div>
+    </div>
+
+    <div class="board fascist-board">
+      <div class="board-title">☠ Politiche Fasciste ☠</div>
+      <div class="policy-track">${fascistSlots}</div>
+    </div>
+
+    ${communistBoard}
+
+    ${fascistHint}
+    ${communistHint}
+    ${communistDeckHint}
+    ${hitlerWinHint}
+    ${markedHint}
+
+    <div class="deck-counter">Mazzo ${state.policyDeck.length} · Scarti ${state.discardPile.length}</div>
+    ${policyButtons}
+    ${antiButtons}
+    ${anarchistButton}
+
+    <div class="counter-row">
+      <div class="label">Election Tracker</div>
+      <div class="controls">
+        <div class="tracker-pips">${pips}</div>
+        <button data-action="tracker" data-dir="-1">−</button>
+        <button data-action="tracker" data-dir="1">+</button>
+      </div>
+    </div>
+
+    <div class="info-card" style="text-align:left; font-size:12px;">
+      Tracker a 3 = la prossima politica in cima al mazzo viene rivelata e applicata. Il tracker si azzera quando passa una legge.
+    </div>
+
+    ${emergencyPanel}
+
+    <button class="btn ghost small" data-action="undo-policy">↶ Annulla ultima politica</button>
+    ${xl.communists || state.fascistPolicies >= 1 ? `<button class="btn ghost small" data-action="show-execution" style="margin-top:6px;">⚰ Gestisci esecuzioni / morti</button>` : ''}
+  `;
+}
+
+function renderEmergencyPanel() {
+  const a48 = state.emergencyArticle48;
+  const ena = state.emergencyEnabling;
+  if (a48 === 0 && ena === 0) return '';
+  return `
+    <div class="emergency-panel">
+      <h4>⚡ EMERGENCY POWERS</h4>
+      <div style="font-size:11px; opacity:0.7;">Restano: ${a48} Article 48 · ${ena} Enabling Act</div>
+      <div class="emergency-grid">
+        ${a48 > 0 ? `
+          <div class="emergency-pill" data-action="emergency" data-type="article48" data-power="propaganda">A48 · Propaganda</div>
+          <div class="emergency-pill" data-action="emergency" data-type="article48" data-power="policy-peek">A48 · Policy Peek</div>
+          <div class="emergency-pill" data-action="emergency" data-type="article48" data-power="impeachment">A48 · Impeachment</div>
+          <div class="emergency-pill" data-action="emergency" data-type="article48" data-power="marked">A48 · Marked for Exec</div>
+          <div class="emergency-pill" data-action="emergency" data-type="article48" data-power="execution">A48 · Execution</div>
+          <div class="emergency-pill" data-action="emergency" data-type="article48" data-power="pardon">A48 · Pardon</div>
+        ` : ''}
+        ${ena > 0 ? `
+          <div class="emergency-pill" data-action="emergency" data-type="enabling" data-power="propaganda">EA · Propaganda</div>
+          <div class="emergency-pill" data-action="emergency" data-type="enabling" data-power="policy-peek">EA · Policy Peek</div>
+          <div class="emergency-pill" data-action="emergency" data-type="enabling" data-power="impeachment">EA · Impeachment</div>
+          <div class="emergency-pill" data-action="emergency" data-type="enabling" data-power="marked">EA · Marked for Exec</div>
+          <div class="emergency-pill" data-action="emergency" data-type="enabling" data-power="execution">EA · Execution</div>
+          <div class="emergency-pill" data-action="emergency" data-type="enabling" data-power="no-confidence">EA · No Confidence</div>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderVote() {
+  if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost) {
+    if (multiplayer.voteResult) {
+      const r = multiplayer.voteResult;
+      return `<div class="vote-tally"><div class="tally-box ja"><div class="num">${r.ja}</div><div class="lbl">JA!</div></div><div class="tally-box nein"><div class="num">${r.nein}</div><div class="lbl">NEIN!</div></div></div>
+        <div class="vote-result ${r.passed ? 'pass' : 'fail'}">${r.passed ? '✓ ELEZIONE APPROVATA' : '✗ ELEZIONE RESPINTA'}</div>`;
+    }
+    if (multiplayer.voteSubmitted) return '<div class="ballot-poster"><div class="ballot-seal">✓</div><div class="ballot-headline">VOTO REGISTRATO</div></div>';
+  }
+  const jaCount = Object.values(state.votes).filter(v => v === 'ja').length;
+  const neinCount = Object.values(state.votes).filter(v => v === 'nein').length;
+  const totalVoted = jaCount + neinCount;
+  const aliveCount = state.players.length - state.executedPlayers.length;
+  const allVoted = totalVoted === aliveCount;
+
+  if (allVoted) {
+    const passed = jaCount > neinCount;
+    return `
+      <div class="vote-tally">
+        <div class="tally-box ja">
+          <div class="num">${jaCount}</div>
+          <div class="lbl">JA!</div>
+        </div>
+        <div class="tally-box nein">
+          <div class="num">${neinCount}</div>
+          <div class="lbl">NEIN!</div>
+        </div>
+      </div>
+      <div class="vote-result ${passed ? 'pass' : 'fail'}">
+        ${passed ? '✓ ELEZIONE APPROVATA' : '✗ ELEZIONE RESPINTA'}
+      </div>
+      ${passed
+        ? `<button class="btn liberal" data-action="confirm-election">Conferma e Continua</button>`
+        : `<button class="btn fascist" data-action="reject-election">Avanza Election Tracker</button>`
+      }
+    `;
+  }
+
+  return `
+    <div class="solo-vote-screen">
+      <div class="ballot-poster">
+        <div class="ballot-seal">✦</div>
+        <div class="ballot-headline">VOLKSSTIMME</div>
+        <div class="ballot-actions">
+          <button class="btn liberal" data-action="cast-secret-vote" data-v="ja">JA!</button>
+          <button class="btn fascist" data-action="cast-secret-vote" data-v="nein">NEIN!</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+const POLICY_META = {
+  liberal: { label: 'LIBERALE', symbol: '★' },
+  fascist: { label: 'FASCISTA', symbol: '⚡' },
+  communist: { label: 'COMUNISTA', symbol: '☭' },
+  anarchist: { label: 'ANARCHICA', symbol: 'Ⓐ' },
+  'anti-fascist': { label: 'ANTI-FASCISTA', symbol: '−F' },
+  'anti-communist': { label: 'ANTI-COMUNISTA', symbol: '−C' },
+  'social-dem': { label: 'SOCIAL-DEMOCRATICA', symbol: 'SD' },
+};
+
+function renderPolicyCard(type, action = '', idx = 0, extraClass = '') {
+  const meta = POLICY_META[type] || { label: String(type).toUpperCase(), symbol: '?' };
+  return `<button class="digital-policy ${type} ${extraClass}" ${action ? `data-action="${action}" data-idx="${idx}"` : ''}>
+    <span class="policy-symbol">${meta.symbol}</span><span>${meta.label}</span>
+  </button>`;
+}
+
+function renderLegislativePass(role) {
+  const president = role === 'president';
+  return `
+    <div class="screen legislative-screen">
+      <div class="title-stack"><h1>Riservato</h1><div class="subtitle">— Sessione Legislativa —</div></div>
+      <div class="pass-screen">
+        <h2>Passa il telefono al</h2>
+        <div class="player-name">${president ? 'PRESIDENTE' : 'CANCELLIERE'}</div>
+      </div>
+      <button class="btn ${president ? 'fascist' : 'liberal'}" data-action="legislative-ready" data-role="${role}">Sono il ${president ? 'Presidente' : 'Cancelliere'}</button>
+    </div>`;
+}
+
+function renderLegislativePresident() {
+  const cards = state.legislative?.cards || [];
+  return `
+    <div class="screen legislative-screen">
+      <div class="title-stack"><h1>Presidente</h1><div class="subtitle">— Scarta una politica —</div></div>
+      <div class="policy-hand">${cards.map((type, i) => renderPolicyCard(type, 'president-discard', i)).join('')}</div>
+      <div class="deck-counter">Mazzo ${state.policyDeck.length} · Scarti ${state.discardPile.length}</div>
+    </div>`;
+}
+
+function renderLegislativeChancellor() {
+  const cards = state.legislative?.cards || [];
+  return `
+    <div class="screen legislative-screen">
+      <div class="title-stack"><h1>Cancelliere</h1><div class="subtitle">— Promulga una politica —</div></div>
+      <div class="policy-hand two">${cards.map((type, i) => renderPolicyCard(type, 'chancellor-enact', i)).join('')}</div>
+      ${state.vetoUnlocked ? '<button class="btn ghost" data-action="request-veto">Richiedi Veto</button>' : ''}
+      <div class="deck-counter">Mazzo ${state.policyDeck.length} · Scarti ${state.discardPile.length}</div>
+    </div>`;
+}
+
+function renderLegislativeVetoPresident() {
+  return `
+    <div class="screen legislative-screen">
+      <div class="title-stack"><h1>Presidente</h1><div class="subtitle">— Richiesta di Veto —</div></div>
+      <button class="btn fascist" data-action="approve-veto">Approva Veto</button>
+      <button class="btn liberal" data-action="refuse-veto">Rifiuta Veto</button>
+    </div>`;
+}
+
+function renderPolicyReveal() {
+  return `
+    <div class="screen legislative-screen">
+      <div class="title-stack"><h1>Politica Scelta</h1></div>
+      ${renderPolicyCard(state.revealedPolicy, '', 0, 'policy-reveal-card')}
+      <button class="btn ghost" data-action="apply-revealed-policy">Applica al tracciato</button>
+    </div>`;
+}
+
+function renderPostElectionChoice() {
+  return `
+    <div class="screen legislative-screen">
+      <div class="title-stack"><h1>Governo Eletto</h1><div class="subtitle">— Mazzo Fisico —</div></div>
+      <button class="btn fascist" data-action="physical-use-digital-draw">Pesca 3 dall’app</button>
+      <button class="btn ghost" data-action="continue-physical-game">Continua senza scegliere</button>
+    </div>`;
+}
+
+function renderHistory() {
+  if (state.history.length === 0) {
+    return '<div class="info-card">Nessun evento ancora registrato.<br>Le elezioni e le politiche compariranno qui.</div>';
+  }
+  return state.history.slice().reverse().map(h => `
+    <div class="history-entry ${h.type === 'liberal' ? 'liberal-event' : ((h.type === 'fascist' || h.type === 'fascist-power') ? 'fascist-event' : ((h.type === 'communist' || h.type === 'communist-power') ? 'communist-event' : ''))}">
+      <div class="turn-num">TURNO ${h.turn}</div>
+      <div class="turn-time">${h.time}</div>
+      <div class="turn-body">${h.body}</div>
+    </div>
+  `).join('');
+}
+
+function renderTimer() {
+  const t = state.timer;
+  const min = Math.floor(t.remaining / 60).toString().padStart(2, '0');
+  const sec = (t.remaining % 60).toString().padStart(2, '0');
+  const warning = t.remaining <= 10 && t.running;
+
+  return `
+    <div class="timer-display ${warning ? 'warning' : ''}">${min}:${sec}</div>
+    <div class="policy-controls">
+      <button class="btn ghost small" data-action="timer-set" data-sec="60">1 min</button>
+      <button class="btn ghost small" data-action="timer-set" data-sec="120">2 min</button>
+      <button class="btn ghost small" data-action="timer-set" data-sec="180">3 min</button>
+      <button class="btn ghost small" data-action="timer-set" data-sec="300">5 min</button>
+    </div>
+    <button class="btn ${t.running ? 'fascist' : 'liberal'}" data-action="timer-toggle">
+      ${t.running ? '⏸ Pausa' : '▶ Avvia'}
+    </button>
+    <button class="btn ghost" data-action="timer-reset">↻ Reset</button>
+    <div class="info-card">Usa il timer per la discussione, le nomine, o per limitare il tempo di scelta delle politiche del Presidente / Cancelliere.</div>
+  `;
+}
+
+// ============================================================
+// SCREEN: END
+// ============================================================
+function renderEnd() {
+  const result = state.endResult;
+  const winData = {
+    liberal:    { title: 'Liberali Vincono',    icon: '★', flavor: 'La Repubblica di Weimar è salva.',          cls: 'liberal' },
+    fascist:    { title: 'Fascisti Vincono',    icon: '☠', flavor: 'Il Terzo Reich avanza nell\'ombra.',          cls: 'fascist' },
+    communist:  { title: 'Comunisti Vincono',   icon: '☭', flavor: 'La rivoluzione è arrivata.',                  cls: 'communist' },
+    capitalist: { title: 'Capitalista Vince',   icon: '💰', flavor: 'Il capitale ha resistito alla tempesta.',    cls: 'capitalist' },
+    anarchist:  { title: 'Anarchico Vince',     icon: 'Ⓐ', flavor: 'Il caos ha trionfato sulla struttura.',       cls: 'anarchist' },
+    monarchist: { title: 'Monarchico Vince',    icon: '♛', flavor: 'L\'antico ordine è ristabilito.',             cls: 'monarchist' },
+  };
+  const w = winData[result] || winData.liberal;
+
+  const roleLabel = {
+    liberal: 'LIBERALE', fascist: 'FASCISTA', hitler: 'HITLER',
+    communist: 'COMUNISTA', capitalist: 'CAPITALISTA',
+    anarchist: 'ANARCHICO', monarchist: 'MONARCHICO'
+  };
+  const roleColor = {
+    liberal: 'var(--liberal-dark)', fascist: 'var(--fascist-dark)', hitler: '#1a0a08',
+    communist: 'var(--communist-dark)', capitalist: '#1a3a25',
+    anarchist: '#000', monarchist: '#2a1538'
+  };
+
+  return `
+    <div class="screen">
+      <div class="title-stack">
+        <h1>${w.title}</h1>
+        <div class="subtitle">— ${state.endReason || 'Fine della partita'} —</div>
+      </div>
+
+      <div class="role-card ${w.cls}">
+        <div class="role-name">${w.icon} ${w.title.toUpperCase()} ${w.icon}</div>
+        <div class="role-desc">${w.flavor}</div>
+      </div>
+
+      <div class="section-label">Ruoli Rivelati</div>
+      <div class="player-list">
+        ${state.players.map((p, i) => {
+          const r = state.roles[i].role;
+          const dead = state.executedPlayers.includes(i);
+          return `
+            <div class="player-item" ${dead ? 'style="opacity:0.55;"' : ''}>
+              <div class="num" style="background:${roleColor[r]}">${i+1}</div>
+              <div class="name">${escapeHtml(p)}${dead ? ' ⚰' : ''}</div>
+              <div style="font-family:var(--display); font-size:12px; color:${roleColor[r]};">${roleLabel[r]}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <button class="btn fascist" data-action="new-game">Nuova Partita</button>
+      <button class="btn ghost" data-action="home">Home</button>
+    </div>
+  `;
+}
+
+// ============================================================
+// HANDLERS
+// ============================================================
+function attachHandlers() {
+  // I select reagiscono solo a "change": ridisegnarli sul click impedisce
+  // l'apertura del menu nativo, soprattutto su Android.
+  $$('[data-action]:not(select)').forEach(el => {
+    el.addEventListener('click', handleAction);
+  });
+
+  // Select dropdowns
+  $$('select[data-action="set-role"]').forEach(el => {
+    el.addEventListener('change', handleAction);
+  });
+
+  // Enter in input
+  const input = $('#player-name');
+  if (input) {
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); addPlayer(); }
+    });
+    input.focus();
+  }
+}
+
+function castNextSecretVote(vote) {
+  if (multiplayer.connected && multiplayer.gameStarted) {
+    if (multiplayer.voteSubmitted) return false;
+    const normalized = vote === 'nein' ? 'nein' : 'ja';
+    if (multiplayer.isHost) {
+      const idx = multiplayer.playerIndex ?? 0;
+      if (state.executedPlayers.includes(idx) || state.votes[idx] !== undefined) return false;
+      state.votes[idx] = normalized;
+      saveGame();
+      broadcastGameState();
+    } else if (multiplayer.hostConnection?.open) {
+      multiplayer.hostConnection.send({ type: 'vote', vote: normalized });
+    } else return false;
+    multiplayer.voteSubmitted = true;
+    return true;
+  }
+  const idx = state.players.findIndex((_, i) => !state.executedPlayers.includes(i) && state.votes[i] === undefined);
+  if (idx < 0) return false;
+  state.votes[idx] = vote;
+  saveGame();
+  return true;
+}
+
+function handleAction(e) {
+  const el = e.currentTarget;
+  const action = el.dataset.action;
+
+  if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost && !['tab','cast-secret-vote','online-role-ready','leave-online-room','home'].includes(action)) return;
+
+  switch (action) {
+    case 'online-menu':
+      multiplayer.error = '';
+      state.screen = 'online-menu';
+      render();
+      break;
+
+    case 'create-online-room': {
+      const name = ($('#online-name')?.value || '').trim();
+      if (!name) { multiplayer.error = 'Inserisci il tuo nome.'; render(); return; }
+      connectAsHost(name);
+      state.screen = 'online-lobby';
+      render();
+      break;
+    }
+
+    case 'join-online-room': {
+      const name = ($('#online-name')?.value || '').trim();
+      const code = ($('#online-room-code')?.value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!name || code.length !== 6) { multiplayer.error = 'Inserisci nome e codice stanza di 6 caratteri.'; render(); return; }
+      connectAsGuest(name, code);
+      state.screen = 'online-lobby';
+      render();
+      break;
+    }
+
+    case 'online-configure':
+      if (!multiplayer.isHost) return;
+      if (multiplayer.players.length < 5) { multiplayer.error = 'Servono almeno 5 giocatori connessi.'; render(); return; }
+      state.players = multiplayer.players.map(p => p.name);
+      state.screen = 'setup';
+      render();
+      break;
+
+    case 'leave-online-room':
+      leaveOnlineRoom();
+      break;
+
+    case 'online-role-ready':
+      state.screen = 'game';
+      state.tab = 'board';
+      render();
+      break;
+
+    case 'home':
+      state.screen = 'home';
+      saveGame();
+      render();
+      break;
+
+    case 'new-game':
+      if (state.players.length > 0 && state.screen !== 'home') {
+        if (!confirm('Iniziare una nuova partita? La partita corrente verrà persa.')) return;
+      }
+      resetGame();
+      state.screen = 'setup';
+      render();
+      break;
+
+    case 'resume-game':
+      loadGame();
+      render();
+      break;
+
+    case 'rules':
+      showRulesModal();
+      break;
+
+    case 'xl-toggle': {
+      const key = el.dataset.key;
+      if (key === 'communists' && state.players.length < 5) return;
+      if (key === 'communistShort' && state.players.length <= 5) return;
+      // Capitalist e communistShort richiedono comunisti
+      if ((key === 'capitalist' || key === 'communistShort') && !state.xl.communists) return;
+      state.xl[key] = !state.xl[key];
+      // Se disattivo comunisti, disattivo anche dipendenti
+      if (key === 'communists' && !state.xl.communists) {
+        state.xl.capitalist = false;
+        state.xl.communistShort = false;
+      }
+      render();
+      break;
+    }
+
+    case 'deck-mode-toggle':
+      state.useDigitalPolicyDeck = !state.useDigitalPolicyDeck;
+      render();
+      break;
+
+    case 'add-player':
+      addPlayer();
+      break;
+
+    case 'remove-player':
+      state.players.splice(parseInt(el.dataset.idx), 1);
+      render();
+      break;
+
+    case 'start-roles':
+      // Imposta liberal slots in base alle opzioni
+      if (state.players.length === 5) state.xl.communistShort = false;
+      if (state.xl.communistShort) state.liberalSlotsTotal = 3;
+      else if (state.xl.liberalTrackerLong) state.liberalSlotsTotal = 6;
+      else state.liberalSlotsTotal = 5;
+      // Calcola Emergency Powers iniziali
+      computeEmergencyPool();
+      assignRoles();
+      initializePolicyDeck();
+      if (multiplayer.isHost && multiplayer.connected) {
+        sendOnlineGameStart();
+        saveGame();
+        render();
+        break;
+      }
+      state.roleRefreshInProgress = false;
+      state.screen = 'pass-reveal';
+      state.reveal = { idx: 0, shown: false };
+      render();
+      break;
+
+    case 'show-role':
+      state.screen = 'role-reveal';
+      render();
+      break;
+
+    case 'hide-role':
+      state.reveal.idx++;
+      if (state.reveal.idx >= state.players.length) {
+        state.screen = 'game';
+        if (state.roleRefreshInProgress) {
+          state.roleRefreshInProgress = false;
+          addHistory('Aggiornamento segreto dei ruoli completato dopo la Radicalizzazione.', 'system');
+        } else {
+          state.turn = 0;
+          addHistory('Distribuzione ruoli completata. Inizia il gioco.', 'system');
+        }
+        saveGame();
+      } else {
+        state.screen = 'pass-reveal';
+      }
+      render();
+      break;
+
+    case 'tab':
+      state.tab = el.dataset.tab;
+      render();
+      break;
+
+    case 'add-policy': {
+      const type = el.dataset.type;
+      applyPolicy(type);
+      saveGame();
+      render();
+      break;
+    }
+
+    case 'undo-policy': {
+      if (!confirm('Annullare l\'ultima politica? Anche la cronologia verrà aggiornata.')) return;
+      for (let i = state.history.length - 1; i >= 0; i--) {
+        const h = state.history[i];
+        if (h.type === 'liberal') { state.liberalPolicies = Math.max(0, state.liberalPolicies - 1); state.history.splice(i, 1); break; }
+        if (h.type === 'fascist') {
+          state.fascistPolicies = Math.max(0, state.fascistPolicies - 1);
+          state.pendingFascistPower = null;
+          state.history.splice(i, 1);
+          break;
+        }
+        if (h.type === 'communist') {
+          state.communistPolicies = Math.max(0, state.communistPolicies - 1);
+          state.pendingCommunistPower = null;
+          state.pendingCommunistPresident = null;
+          state.history.splice(i, 1);
+          break;
+        }
+      }
+      saveGame();
+      render();
+      break;
+    }
+
+    case 'tracker': {
+      const dir = parseInt(el.dataset.dir);
+      state.electionTracker = Math.max(0, Math.min(3, state.electionTracker + dir));
+      if (state.electionTracker >= 3) {
+        addHistory('<strong>Election Tracker a 3</strong> — politica in cima al mazzo applicata. Tutti i poteri di mandato consecutivo si resettano.', 'system');
+        state.electionTracker = 0;
+        state.prevPresident = null;
+        state.prevChancellor = null;
+        prepareChaosPolicy();
+      }
+      saveGame();
+      render();
+      break;
+    }
+
+    case 'set-role': {
+      const role = el.dataset.role;
+      const val = el.value === '' ? null : parseInt(el.value);
+      if (role === 'president') state.president = val;
+      if (role === 'chancellor') state.chancellor = val;
+      state.votes = {};
+      saveGame();
+      render();
+      break;
+    }
+
+    case 'clear-votes':
+      state.votes = {};
+      saveGame();
+      render();
+      break;
+
+    case 'cast-secret-vote':
+      if (castNextSecretVote(el.dataset.v)) render();
+      break;
+
+    case 'confirm-election': {
+      const ja = Object.values(state.votes).filter(v => v === 'ja').length;
+      const nein = Object.values(state.votes).filter(v => v === 'nein').length;
+      addHistory(`<strong>Governo eletto</strong> (${ja} Ja / ${nein} Nein)`, 'system');
+      state.votes = {};
+      multiplayer.voteSubmitted = false;
+      multiplayer.voteResult = null;
+      if (state.useDigitalPolicyDeck) beginLegislativeSession();
+      else state.screen = 'post-election-choice';
+      saveGame();
+      render();
+      break;
+    }
+
+    case 'reject-election': {
+      const ja = Object.values(state.votes).filter(v => v === 'ja').length;
+      const nein = Object.values(state.votes).filter(v => v === 'nein').length;
+      addHistory(`<strong>Governo respinto</strong> (${ja} Ja / ${nein} Nein)`, 'system');
+      state.electionTracker = Math.min(3, state.electionTracker + 1);
+      if (state.electionTracker >= 3) {
+        addHistory('<strong>Election Tracker a 3</strong> — politica in cima al mazzo applicata.', 'system');
+        state.electionTracker = 0;
+        state.prevPresident = null;
+        state.prevChancellor = null;
+        prepareChaosPolicy();
+      }
+      state.votes = {};
+      multiplayer.voteSubmitted = false;
+      multiplayer.voteResult = null;
+      nextTurn();
+      saveGame();
+      render();
+      break;
+    }
+
+    case 'legislative-ready':
+      state.screen = el.dataset.role === 'president' ? 'legislative-president' : 'legislative-chancellor';
+      saveGame();
+      render();
+      break;
+
+    case 'physical-use-digital-draw':
+      beginLegislativeSession();
+      render();
+      break;
+
+    case 'continue-physical-game':
+      state.screen = 'game';
+      state.tab = 'board';
+      addHistory('Sessione legislativa gestita con il mazzo fisico.', 'system');
+      nextTurn();
+      saveGame();
+      render();
+      break;
+
+    case 'president-discard': {
+      if (!state.legislative || state.legislative.cards.length !== 3) return;
+      const idx = parseInt(el.dataset.idx);
+      const discarded = state.legislative.cards.splice(idx, 1)[0];
+      state.discardPile.push(discarded);
+      state.screen = 'legislative-pass-chancellor';
+      saveGame();
+      render();
+      break;
+    }
+
+    case 'chancellor-enact': {
+      if (!state.legislative || state.legislative.cards.length !== 2) return;
+      const idx = parseInt(el.dataset.idx);
+      state.revealedPolicy = state.legislative.cards[idx];
+      state.revealedPolicySource = 'legislative';
+      state.discardPile.push(state.legislative.cards[1 - idx]);
+      state.legislative = null;
+      state.screen = 'policy-reveal';
+      saveGame();
+      render();
+      break;
+    }
+
+    case 'request-veto':
+      if (!state.vetoUnlocked || !state.legislative || state.legislative.cards.length !== 2) return;
+      state.screen = 'legislative-veto-president';
+      saveGame();
+      render();
+      break;
+
+    case 'refuse-veto':
+      state.screen = 'legislative-chancellor';
+      saveGame();
+      render();
+      break;
+
+    case 'approve-veto':
+      if (!state.legislative || state.legislative.cards.length !== 2) return;
+      state.discardPile.push(...state.legislative.cards);
+      state.legislative = null;
+      state.electionTracker = Math.min(3, state.electionTracker + 1);
+      addHistory('<strong>Veto approvato</strong>: entrambe le politiche sono state scartate.', 'system');
+      state.screen = 'game';
+      state.tab = 'vote';
+      if (state.electionTracker >= 3) {
+        state.electionTracker = 0;
+        prepareChaosPolicy();
+      }
+      nextTurn();
+      saveGame();
+      render();
+      break;
+
+    case 'apply-revealed-policy': {
+      if (!state.revealedPolicy) return;
+      const type = state.revealedPolicy;
+      const fromChaos = state.revealedPolicySource === 'chaos';
+      state.revealedPolicy = null;
+      state.revealedPolicySource = null;
+      state.screen = 'game';
+      state.tab = 'board';
+      applyPolicy(type, { suppressPower: fromChaos });
+      saveGame();
+      render();
+      break;
+    }
+
+    case 'timer-set': {
+      const sec = parseInt(el.dataset.sec);
+      stopTimer();
+      state.timer.seconds = sec;
+      state.timer.remaining = sec;
+      render();
+      break;
+    }
+
+    case 'timer-toggle':
+      if (state.timer.running) stopTimer(); else startTimer();
+      render();
+      break;
+
+    case 'timer-reset':
+      stopTimer();
+      state.timer.remaining = state.timer.seconds;
+      render();
+      break;
+
+    case 'menu':
+      showMenuModal();
+      break;
+
+    case 'show-power-script':
+      showPowerScriptModal(el.dataset.power);
+      break;
+
+    case 'activate-communist-power':
+      showCommunistPowerModal(el.dataset.power);
+      break;
+
+    case 'activate-fascist-power':
+      showFascistPowerModal(el.dataset.power);
+      break;
+
+    case 'show-execution':
+      showExecutionModal();
+      break;
+
+    case 'emergency': {
+      const type = el.dataset.type;
+      const power = el.dataset.power;
+      // Verifica disponibilità
+      if (type === 'article48' && state.emergencyArticle48 <= 0) return;
+      if (type === 'enabling' && state.emergencyEnabling <= 0) return;
+      handleEmergencyPower(type, power);
+      break;
+    }
+  }
+}
+
+// ============================================================
+// APPLICAZIONE POLITICHE (incluse anti-policies)
+// ============================================================
+function applyPolicy(type, options = {}) {
+  if (type === 'liberal') {
+    state.liberalPolicies = Math.min(state.liberalSlotsTotal, state.liberalPolicies + 1);
+    addHistory(`<strong>Politica Liberale</strong> approvata (${state.liberalPolicies}/${state.liberalSlotsTotal})${governmentSummary()}`, 'liberal');
+    state.electionTracker = 0;
+    if (state.liberalPolicies >= state.liberalSlotsTotal) endGame('liberal', `${state.liberalSlotsTotal} politiche liberali approvate`);
+    nextTurn();
+  } else if (type === 'fascist') {
+    state.fascistPolicies = Math.min(6, state.fascistPolicies + 1);
+    const config = PLAYER_CONFIG[state.players.length];
+    const power = options.suppressPower ? null : config.powers[state.fascistPolicies - 1];
+    if (power) state.pendingFascistPower = power;
+    let powerNote = '';
+    if (power) powerNote = `<br><strong>Potere attivato:</strong> ${POWER_LABELS[power]} — ${POWER_DESCRIPTIONS[power]}`;
+    if (state.fascistPolicies === 3) powerNote += '<br>⚠ <strong>Hitler può ora vincere come Cancelliere</strong>';
+    addHistory(`<strong>Politica Fascista</strong> approvata (${state.fascistPolicies}/6)${governmentSummary()}${powerNote}`, 'fascist');
+    state.electionTracker = 0;
+    if (state.fascistPolicies >= 6) endGame('fascist', '6 politiche fasciste approvate');
+    nextTurn();
+  } else if (type === 'communist') {
+    const n = state.players.length;
+    const track = getCommunistTrack(n, state.xl.communistShort);
+    state.communistPolicies = Math.min(track.slots, state.communistPolicies + 1);
+    const cPower = options.suppressPower ? null : track.powers[state.communistPolicies - 1];
+    if (cPower) {
+      state.pendingCommunistPower = cPower;
+      state.pendingCommunistPresident = state.president;
+    }
+    let powerNote = '';
+    if (cPower) powerNote = `<br><strong>Potere comunista attivato:</strong> ${POWER_LABELS[cPower]} — ${POWER_DESCRIPTIONS[cPower]}`;
+    addHistory(`<strong>Politica Comunista</strong> approvata (${state.communistPolicies}/${track.slots})${governmentSummary()}${powerNote}`, 'communist');
+    state.electionTracker = 0;
+    if (state.communistPolicies >= track.slots) endGame('communist', `${track.slots} politiche comuniste approvate`);
+    nextTurn();
+  } else if (type === 'anti-fascist') {
+    // Va sul tracker comunista, rimuove una politica fascista, nessuno riusa il potere
+    const n = state.players.length;
+    const track = getCommunistTrack(n, state.xl.communistShort);
+    state.communistPolicies = Math.min(track.slots, state.communistPolicies + 1);
+    state.fascistPolicies = Math.max(0, state.fascistPolicies - 1);
+    addHistory(`<strong>Politica Anti-Fascista</strong>: +1 sul tracker Comunista, -1 sul Fascista. Nessun potere fascista riusato.${governmentSummary()}`, 'communist');
+    state.electionTracker = 0;
+    if (state.communistPolicies >= track.slots) endGame('communist', 'Tracker comunista completato (via Anti-Fascista)');
+    nextTurn();
+  } else if (type === 'anti-communist') {
+    state.fascistPolicies = Math.min(6, state.fascistPolicies + 1);
+    state.communistPolicies = Math.max(0, state.communistPolicies - 1);
+    addHistory(`<strong>Politica Anti-Comunista</strong>: +1 sul tracker Fascista, -1 sul Comunista. Nessun potere comunista riusato.${governmentSummary()}`, 'fascist');
+    state.electionTracker = 0;
+    if (state.fascistPolicies >= 6) endGame('fascist', 'Tracker fascista completato (via Anti-Comunista)');
+    nextTurn();
+  } else if (type === 'social-dem') {
+    state.liberalPolicies = Math.min(state.liberalSlotsTotal, state.liberalPolicies + 1);
+    // L'utente sceglierà da quale tracker togliere via modale
+    showSocialDemModal();
+    addHistory(`<strong>Politica Social-Democratica</strong>: +1 Liberale. Il Presidente rimuove 1 Fascista o Comunista.${governmentSummary()}`, 'liberal');
+    state.electionTracker = 0;
+    if (state.liberalPolicies >= state.liberalSlotsTotal) endGame('liberal', 'Tracker liberale completato (via Social-Dem)');
+    nextTurn();
+  } else if (type === 'anarchist') {
+    if (state.xl.communists) {
+      const track = getCommunistTrack(state.players.length, state.xl.communistShort);
+      state.communistPolicies = Math.min(track.slots, state.communistPolicies + 1);
+      state.anarchistOnCommunistTracker++;
+      addHistory(`<strong>Politica Anarchica</strong> sul tracker Comunista (${state.communistPolicies}/${track.slots}). Nessun potere comunista attivato.`, 'communist');
+      if (state.communistPolicies >= track.slots) {
+        endGame(state.anarchistOnCommunistTracker >= 2 ? 'anarchist' : 'communist', 'Tracker comunista completato');
+      }
+      nextTurn();
+    } else {
+      addHistory(`<strong>Politica Anarchica</strong> promulgata via Election Tracker. L'Anarchico vince!`, 'system');
+      endGame('anarchist', 'Politica anarchica via election tracker');
+    }
+  }
+}
+
+// ============================================================
+// EMERGENCY POWERS
+// ============================================================
+function computeEmergencyPool() {
+  if (!state.xl.emergencyPowers) {
+    state.emergencyArticle48 = 0;
+    state.emergencyEnabling = 0;
+    return;
+  }
+  const n = state.players.length;
+  let extra;
+  if (state.xl.communists) {
+    extra = Math.max(0, (n - 13) * 2);
+  } else {
+    extra = Math.max(0, n - 10);
+  }
+  // Max 6 totali (3 + 3)
+  extra = Math.min(6, extra);
+  // Split 50/50 con bias verso article48
+  state.emergencyArticle48 = Math.min(3, Math.ceil(extra / 2));
+  state.emergencyEnabling = Math.min(3, Math.floor(extra / 2));
+}
+
+function handleEmergencyPower(type, power) {
+  const role = type === 'article48' ? 'Presidente' : 'Cancelliere';
+  const labels = {
+    'propaganda': 'Propaganda (guarda 1 carta, scarta o ripone)',
+    'policy-peek': 'Policy Peek (guarda le 3 carte in cima)',
+    'impeachment': 'Impeachment (l\'altro mostra Affiliazione al giocatore scelto)',
+    'marked': 'Marked for Execution (target ucciso dopo 3 politiche fasciste)',
+    'execution': 'Execution (uccidi un giocatore)',
+    'pardon': 'Presidential Pardon (rimuovi marker dal Marked)',
+    'no-confidence': 'Vote of No Confidence (la scartata diventa legge)',
+  };
+  
+  if (power === 'execution') {
+    showExecutionModal(true, role);
+  } else if (power === 'marked') {
+    showMarkedForExecutionModal(role);
+  } else if (power === 'pardon') {
+    if (state.markedForExecution === null) { alert('Nessuno è marcato per esecuzione.'); return; }
+    if (confirm(`Rimuovere il marcatura da ${state.players[state.markedForExecution]}?`)) {
+      addHistory(`<strong>Presidential Pardon</strong>: ${escapeHtml(state.players[state.markedForExecution])} non è più marcato.`, 'system');
+      state.markedForExecution = null;
+    } else {
+      return;
+    }
+  } else if (power === 'no-confidence') {
+    addHistory(`<strong>Enabling Act · Vote of No Confidence</strong>: la carta scartata dal Presidente è stata promulgata. Aggiungila al tracker manualmente con i pulsanti.`, 'system');
+  } else {
+    addHistory(`<strong>${type === 'article48' ? 'Article 48' : 'Enabling Act'} · ${labels[power]}</strong> attivata dal ${role}.`, 'system');
+  }
+  
+  if (type === 'article48') state.emergencyArticle48--;
+  else state.emergencyEnabling--;
+  saveGame();
+  render();
+}
+
+function addPlayer() {
+  const input = $('#player-name');
+  if (!input) return;
+  const name = input.value.trim();
+  if (!name) return;
+  if (state.players.length >= 20) {
+    alert('Massimo 20 giocatori.');
+    return;
+  }
+  if (state.players.some(p => p.toLowerCase() === name.toLowerCase())) {
+    alert('Nome già usato.');
+    return;
+  }
+  state.players.push(name);
+  input.value = '';
+  render();
+}
+
+function assignRoles() {
+  const n = state.players.length;
+  const config = PLAYER_CONFIG[n];
+  const xl = state.xl;
+  let fascists = config.fascists;
+  const pool = [];
+
+  // Hitler
+  pool.push('hitler');
+
+  // Comunisti
+  let communists = 0;
+  if (xl.communists) {
+    communists = COMMUNIST_COUNT[n] || 0;
+  }
+  // Anarchico (sostituisce 1 comunista se in modalità comunista, altrimenti è un ruolo segreto su un liberale)
+  let anarchistsToAdd = 0;
+  if (xl.anarchist) {
+    if (xl.communists && communists >= 1) {
+      communists--;
+      anarchistsToAdd = 1;
+    } else {
+      anarchistsToAdd = 1;
+    }
+  }
+  for (let i = 0; i < communists; i++) pool.push('communist');
+  for (let i = 0; i < anarchistsToAdd; i++) pool.push('anarchist');
+
+  // Monarchico (sostituisce 1 fascista)
+  let monarchistToAdd = 0;
+  if (xl.monarchist && fascists >= 1) {
+    fascists--;
+    monarchistToAdd = 1;
+  }
+  for (let i = 0; i < fascists; i++) pool.push('fascist');
+  for (let i = 0; i < monarchistToAdd; i++) pool.push('monarchist');
+
+  // Capitalista (sostituisce un liberale)
+  let liberals = n - pool.length;
+  if (xl.capitalist && xl.communists && liberals >= 1) {
+    liberals--;
+    pool.push('capitalist');
+  }
+  // Se anarchista NON comunista, l'anarchico è già conteggiato (sostituisce un liberale di fatto)
+  if (xl.anarchist && !xl.communists) {
+    // Già aggiunto sopra; sottrarre 1 dai liberali
+    liberals = Math.max(0, liberals - 1);
+  }
+
+  for (let i = 0; i < liberals; i++) pool.push('liberal');
+
+  // Verifica conteggio
+  while (pool.length < n) pool.push('liberal');
+  while (pool.length > n) pool.pop();
+
+  // Shuffle Fisher-Yates
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  state.roles = {};
+  pool.forEach((role, i) => { state.roles[i] = { role }; });
+}
+
+function shuffleArray(items) {
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+  return items;
+}
+
+function replacePolicy(deck, from, to) {
+  const idx = deck.indexOf(from);
+  if (idx >= 0) deck[idx] = to;
+}
+
+function buildPolicyDeck() {
+  const n = state.players.length;
+  const xl = state.xl;
+  let counts;
+  if (!xl.communists) counts = { fascist: 11, liberal: 6, communist: 0 };
+  else if (n === 5) counts = { fascist: 7, liberal: 6, communist: 6 };
+  else if (xl.communistShort) counts = { fascist: 10, liberal: 4, communist: 6 };
+  else if (n === 8) counts = { fascist: 9, liberal: 6, communist: 8 };
+  else counts = { fascist: 10, liberal: 5, communist: 8 };
+
+  const deck = [];
+  Object.entries(counts).forEach(([type, count]) => {
+    for (let i = 0; i < count; i++) deck.push(type);
+  });
+  if (xl.anarchist && xl.communists) {
+    replacePolicy(deck, 'communist', 'anarchist');
+    replacePolicy(deck, 'communist', 'anarchist');
+  } else if (xl.anarchist) {
+    deck.push('anarchist', 'anarchist', 'anarchist');
+  }
+  if (xl.antiPolicies && xl.communists) {
+    replacePolicy(deck, 'communist', 'anti-fascist');
+    replacePolicy(deck, 'fascist', 'anti-communist');
+    replacePolicy(deck, 'liberal', 'social-dem');
+  }
+  return shuffleArray(deck);
+}
+
+function initializePolicyDeck() {
+  state.policyDeck = buildPolicyDeck();
+  state.discardPile = [];
+  state.legislative = null;
+  state.revealedPolicy = null;
+  state.revealedPolicySource = null;
+}
+
+function ensurePolicyCards(count) {
+  if (state.policyDeck.length >= count) return true;
+  if (state.discardPile.length) {
+    state.policyDeck.push(...state.discardPile);
+    state.discardPile = [];
+    shuffleArray(state.policyDeck);
+    addHistory('<strong>Mazzo politiche rimescolato</strong> con le carte scartate rimaste.', 'system');
+  }
+  return state.policyDeck.length >= count;
+}
+
+function drawPolicyCards(count) {
+  if (!ensurePolicyCards(count)) return [];
+  const cards = [];
+  for (let i = 0; i < count; i++) cards.push(state.policyDeck.pop());
+  return cards;
+}
+
+function beginLegislativeSession() {
+  const cards = drawPolicyCards(3);
+  if (cards.length !== 3) {
+    alert('Non ci sono abbastanza politiche nel mazzo o negli scarti.');
+    return false;
+  }
+  state.legislative = { cards };
+  state.revealedPolicy = null;
+  state.revealedPolicySource = null;
+  state.screen = 'legislative-pass-president';
+  saveGame();
+  return true;
+}
+
+function prepareChaosPolicy() {
+  const cards = drawPolicyCards(1);
+  if (!cards.length) return false;
+  state.legislative = null;
+  state.revealedPolicy = cards[0];
+  state.revealedPolicySource = 'chaos';
+  state.screen = 'policy-reveal';
+  return true;
+}
+
+function nextTurn() {
+  state.turn++;
+  state.president = null;
+  state.chancellor = null;
+  state.votes = {};
+}
+
+function governmentSummary() {
+  if (state.president !== null && state.chancellor !== null) {
+    return `<br>Pres. ${escapeHtml(state.players[state.president])} · Canc. ${escapeHtml(state.players[state.chancellor])}`;
+  }
+  return '';
+}
+
+function addHistory(body, type) {
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  state.history.push({ turn: state.turn + 1, time, body, type });
+}
+
+function endGame(winner, reason) {
+  state.endResult = winner;
+  state.endReason = reason;
+  const winnerLabels = { liberal:'Liberali', fascist:'Fascisti', communist:'Comunisti', capitalist:'Capitalista', anarchist:'Anarchico', monarchist:'Monarchico' };
+  addHistory(`<strong>FINE PARTITA</strong> — ${reason}. ${winnerLabels[winner] || winner} vince.`, 'system');
+  state.screen = 'end';
+  saveGame();
+}
+
+function resetGame() {
+  state.players = [];
+  state.roles = {};
+  state.liberalPolicies = 0;
+  state.fascistPolicies = 0;
+  state.communistPolicies = 0;
+  state.anarchistOnCommunistTracker = 0;
+  state.liberalSlotsTotal = 5;
+  state.electionTracker = 0;
+  state.president = null;
+  state.chancellor = null;
+  state.prevPresident = null;
+  state.prevChancellor = null;
+  state.votes = {};
+  state.pendingFascistPower = null;
+  state.pendingCommunistPower = null;
+  state.pendingCommunistPresident = null;
+  state.communistDeckAdditions = { communist: 0, liberal: 0 };
+  state.policyDeck = [];
+  state.discardPile = [];
+  state.legislative = null;
+  state.revealedPolicy = null;
+  state.revealedPolicySource = null;
+  state.useDigitalPolicyDeck = true;
+  state.roleRefreshInProgress = false;
+  state.reveal = { idx: 0, shown: false };
+  state.turn = 0;
+  state.history = [];
+  state.endResult = null;
+  state.endReason = null;
+  state.markedForExecution = null;
+  state.executedPlayers = [];
+  state.vetoUnlocked = false;
+  state.emergencyArticle48 = 0;
+  state.emergencyEnabling = 0;
+  // Reset opzioni XL alla configurazione di default
+  state.xl = {
+    communists: false, capitalist: false, anarchist: false, monarchist: false,
+    antiPolicies: false, socialDem: false, emergencyPowers: false,
+    liberalTrackerLong: false, communistShort: false,
+  };
+  stopTimer();
+  state.timer = { running: false, seconds: 60, remaining: 60 };
+  try { localStorage.removeItem('sh_save'); } catch(e) {}
+}
+
+// ----- TIMER -----
+function startTimer() {
+  if (state.timer.running) return;
+  state.timer.running = true;
+  state.timerInterval = setInterval(() => {
+    state.timer.remaining--;
+    if (state.timer.remaining <= 0) {
+      state.timer.remaining = 0;
+      stopTimer();
+      try {
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
+      } catch(e) {}
+    }
+    if (state.tab === 'timer') render();
+  }, 1000);
+}
+
+function stopTimer() {
+  state.timer.running = false;
+  if (state.timerInterval) clearInterval(state.timerInterval);
+  state.timerInterval = null;
+}
+
+// ----- SAVE / LOAD -----
+function saveGame() {
+  try {
+    const data = {
+      screen: state.screen,
+      tab: state.tab,
+      players: state.players,
+      roles: state.roles,
+      liberalPolicies: state.liberalPolicies,
+      fascistPolicies: state.fascistPolicies,
+      communistPolicies: state.communistPolicies,
+      liberalSlotsTotal: state.liberalSlotsTotal,
+      electionTracker: state.electionTracker,
+      president: state.president,
+      chancellor: state.chancellor,
+      prevPresident: state.prevPresident,
+      prevChancellor: state.prevChancellor,
+      votes: state.votes,
+      pendingFascistPower: state.pendingFascistPower,
+      pendingCommunistPower: state.pendingCommunistPower,
+      pendingCommunistPresident: state.pendingCommunistPresident,
+      communistDeckAdditions: state.communistDeckAdditions,
+      policyDeck: state.policyDeck,
+      discardPile: state.discardPile,
+      legislative: state.legislative,
+      revealedPolicy: state.revealedPolicy,
+      revealedPolicySource: state.revealedPolicySource,
+      useDigitalPolicyDeck: state.useDigitalPolicyDeck,
+      reveal: state.reveal,
+      roleRefreshInProgress: state.roleRefreshInProgress,
+      turn: state.turn,
+      history: state.history,
+      endResult: state.endResult,
+      endReason: state.endReason,
+      xl: state.xl,
+      emergencyArticle48: state.emergencyArticle48,
+      emergencyEnabling: state.emergencyEnabling,
+      markedForExecution: state.markedForExecution,
+      executedPlayers: state.executedPlayers,
+      vetoUnlocked: state.vetoUnlocked,
+    };
+    localStorage.setItem('sh_save', JSON.stringify(data));
+    broadcastGameState();
+  } catch(e) {}
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem('sh_save');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    Object.assign(state, data);
+    // Fallback per partite salvate con vecchio formato
+    if (!state.xl) state.xl = { communists:false, capitalist:false, anarchist:false, monarchist:false, antiPolicies:false, socialDem:false, emergencyPowers:false, liberalTrackerLong:false, communistShort:false };
+    if (state.executedPlayers === undefined) state.executedPlayers = [];
+    if (state.markedForExecution === undefined) state.markedForExecution = null;
+    if (state.communistPolicies === undefined) state.communistPolicies = 0;
+    if (state.liberalSlotsTotal === undefined) state.liberalSlotsTotal = 5;
+    if (state.emergencyArticle48 === undefined) state.emergencyArticle48 = 0;
+    if (state.emergencyEnabling === undefined) state.emergencyEnabling = 0;
+    if (state.pendingCommunistPower === undefined) state.pendingCommunistPower = null;
+    if (state.pendingFascistPower === undefined) state.pendingFascistPower = null;
+    if (state.pendingCommunistPresident === undefined) state.pendingCommunistPresident = null;
+    if (!state.communistDeckAdditions) state.communistDeckAdditions = { communist: 0, liberal: 0 };
+    if (!Array.isArray(state.policyDeck)) state.policyDeck = [];
+    if (!Array.isArray(state.discardPile)) state.discardPile = [];
+    if (state.legislative === undefined) state.legislative = null;
+    if (state.revealedPolicy === undefined) state.revealedPolicy = null;
+    if (state.revealedPolicySource === undefined) state.revealedPolicySource = null;
+    if (state.useDigitalPolicyDeck === undefined) state.useDigitalPolicyDeck = true;
+    if (!state.reveal) state.reveal = { idx: 0, shown: false };
+    if (state.roleRefreshInProgress === undefined) state.roleRefreshInProgress = false;
+  } catch(e) {}
+}
+
+// ----- MODALS -----
+function showRulesModal() {
+  const modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  modal.innerHTML = `
+    <div class="modal" style="max-height:85vh; overflow-y:auto;">
+      <h3>Regole Rapide · XL</h3>
+      <p style="text-align:left; line-height:1.7; font-size:13px;">
+      <strong>OBIETTIVI BASE</strong><br>
+      • <strong>Liberali</strong>: ${state.liberalSlotsTotal || 5} politiche liberali O eliminare Hitler<br>
+      • <strong>Fascisti</strong>: 6 politiche fasciste O eleggere Hitler Cancelliere dopo la 3ª politica fascista<br>
+      ${state.xl?.communists ? '• <strong>Comunisti</strong>: riempire tracker comunista O assassinare Hitler (con i Liberali)<br>' : ''}
+      ${state.xl?.capitalist ? '• <strong>Capitalista</strong>: vince se né Comunisti né Anarchico vincono<br>' : ''}
+      ${state.xl?.anarchist && state.xl?.communists ? '• <strong>Anarchico (con Com.)</strong>: i Comunisti vincono con 2 anarchiche sul tracker, o Hitler muore<br>' : ''}
+      ${state.xl?.anarchist && !state.xl?.communists ? '• <strong>Anarchico</strong>: una politica anarchica viene promulgata via election tracker<br>' : ''}
+      ${state.xl?.monarchist ? '• <strong>Monarchico</strong>: Fascisti vincono SENZA Hitler Cancelliere dopo la 3ª fascista<br>' : ''}
+      <br>
+
+      <strong>TURNO</strong><br>
+      1. Presidente nomina un Cancelliere<br>
+      2. Tutti votano Ja!/Nein!<br>
+      3. Se passa: Presidente pesca 3 politiche, scarta 1, passa 2 al Cancelliere, che ne sceglie 1<br>
+      4. Se la politica attiva un potere, il Presidente lo esegue<br><br>
+
+      <strong>ELECTION TRACKER</strong><br>
+      3 voti falliti consecutivi → la prossima carta in cima al mazzo viene promulgata automaticamente.<br><br>
+
+      ${state.xl?.communists ? `
+      <strong>POTERI COMUNISTI</strong><br>
+      • <strong>Bugging</strong>: i Comunisti guardano insieme la tessera di un giocatore<br>
+      • <strong>Radicalizza</strong>: scambiano la tessera di un giocatore con una Comunista (non Hitler/Capitalista)<br>
+      • <strong>Piano 5 anni</strong>: +2 Comuniste +1 Liberale nel mazzo, poi rimescola<br>
+      • <strong>Congresso</strong>: i nuovi Comunisti scoprono gli originari<br>
+      • <strong>Confessione</strong>: il Presidente rivela a tutti la sua tessera<br><br>
+      ` : ''}
+
+      ${state.xl?.antiPolicies ? `
+      <strong>ANTI-POLICIES</strong><br>
+      • <strong>Anti-Fascista</strong>: va sul tracker Comunista, rimuove 1 Fascista, nessun potere fascista riusato<br>
+      • <strong>Anti-Comunista</strong>: va sul tracker Fascista, rimuove 1 Comunista, nessun potere comunista riusato<br>
+      • <strong>Social-Democratica</strong>: va sul tracker Liberale, rimuove 1 Fascista O 1 Comunista a scelta del Presidente<br><br>
+      ` : ''}
+
+      ${state.xl?.emergencyPowers ? `
+      <strong>EMERGENCY POWERS</strong><br>
+      Una carta usabile dal Presidente (Article 48) o Cancelliere (Enabling Act):<br>
+      • Propaganda · Policy Peek · Impeachment · Marked for Execution · Execution · Pardon (solo A48) · No Confidence (solo EA)<br>
+      Article 48 e Enabling Act si esauriscono dopo l'uso.
+      ` : ''}
+      </p>
+      <button class="btn fascist" data-modal-close>Chiudi</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => {
+    if (e.target === modal || e.target.hasAttribute('data-modal-close')) {
+      modal.remove();
+    }
+  });
+}
+
+function showSecretVoteModal(idx) {
+  if (state.executedPlayers.includes(idx) || state.votes[idx] !== undefined) return;
+
+  const modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  let votingStarted = false;
+  let dragStartX = null;
+  let draggedBallot = null;
+  const shell = (body) => {
+    modal.innerHTML = `
+      <div class="modal">
+        <h3>Voto Segreto</h3>
+        ${body}
+      </div>
+    `;
+  };
+
+  shell(`
+    <div class="info-card">Nascondi lo schermo e passa il telefono a <strong>${escapeHtml(state.players[idx])}</strong>.<br>Gli altri giocatori non devono guardare.</div>
+    <button class="btn ghost" data-sv="ready">Sono ${escapeHtml(state.players[idx])}</button>
+    <button class="btn ghost small" data-sv="cancel">Annulla</button>
+  `);
+
+  const registerVote = (vote) => {
+    state.votes[idx] = vote;
+    saveGame();
+    dragStartX = null;
+    draggedBallot = null;
+    shell(`
+      <div class="info-card"><strong>Voto registrato.</strong><br>La scelta resta segreta. Nascondi lo schermo prima di restituire il telefono.</div>
+      <button class="btn ghost" data-sv="done">Nascondi e restituisci</button>
+    `);
+  };
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => {
+    const button = e.target.closest('[data-sv]');
+    if (!button) {
+      if (e.target === modal && !votingStarted) modal.remove();
+      return;
+    }
+    const action = button.dataset.sv;
+    if (action === 'cancel' && !votingStarted) { modal.remove(); return; }
+    if (action === 'ready') {
+      votingStarted = true;
+      shell(`
+        <p><strong>${escapeHtml(state.players[idx])}</strong>, trascina la scheda:</p>
+        <div class="swipe-vote-zone">
+          <div class="swipe-direction left">← JA</div>
+          <div class="swipe-direction right">NEIN →</div>
+          <div class="swipe-ballot" data-swipe-ballot>SCORRI<br>PER VOTARE</div>
+        </div>
+        <div style="font-family:var(--typewriter); font-size:12px;">Sinistra = JA · Destra = NEIN</div>
+      `);
+      return;
+    }
+    if (action === 'done') {
+      modal.remove();
+      render();
+    }
+  });
+
+  modal.addEventListener('pointerdown', e => {
+    const ballot = e.target.closest('[data-swipe-ballot]');
+    if (!ballot || state.votes[idx] !== undefined) return;
+    dragStartX = e.clientX;
+    draggedBallot = ballot;
+    ballot.style.transition = 'none';
+  });
+  modal.addEventListener('pointermove', e => {
+    if (dragStartX === null || !draggedBallot) return;
+    const delta = Math.max(-130, Math.min(130, e.clientX - dragStartX));
+    draggedBallot.style.transform = `translateX(${delta}px) rotate(${delta / 18}deg)`;
+  });
+  const finishSwipe = (e) => {
+    if (dragStartX === null || !draggedBallot) return;
+    const delta = e.clientX - dragStartX;
+    if (delta <= -70) registerVote('ja');
+    else if (delta >= 70) registerVote('nein');
+    else {
+      draggedBallot.style.transition = 'transform 0.16s ease';
+      draggedBallot.style.transform = '';
+      dragStartX = null;
+      draggedBallot = null;
+    }
+  };
+  modal.addEventListener('pointerup', finishSwipe);
+  modal.addEventListener('pointercancel', finishSwipe);
+}
+
+function partyMembership(role) {
+  if (role === 'fascist' || role === 'hitler' || role === 'monarchist') {
+    return { label: 'FASCISTA', color: 'var(--fascist-dark)' };
+  }
+  if (role === 'communist' || (role === 'anarchist' && state.xl.communists)) {
+    return { label: 'COMUNISTA', color: 'var(--communist-dark)' };
+  }
+  return { label: 'LIBERALE', color: 'var(--liberal-dark)' };
+}
+
+function hasCommunistMembership(role) {
+  return role === 'communist' || (role === 'anarchist' && state.xl.communists);
+}
+
+function finishCommunistPower(modal, power, historyText) {
+  addHistory(`<strong>${POWER_LABELS[power]}</strong>: ${historyText}`, 'communist-power');
+  state.pendingCommunistPower = null;
+  state.pendingCommunistPresident = null;
+  modal.remove();
+  saveGame();
+  render();
+}
+
+function showCommunistPowerModal(power) {
+  if (!power || state.pendingCommunistPower !== power) return;
+
+  const modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  let mustFinish = false;
+  let radicalisedIdx = null;
+  const shell = (body, showCancel = true) => {
+    modal.innerHTML = `
+      <div class="modal" style="max-height:88vh; overflow-y:auto;">
+        <h3>${POWER_LABELS[power]}</h3>
+        ${body}
+        ${showCancel ? '<button class="btn ghost" data-cp="cancel">Chiudi e completa dopo</button>' : ''}
+      </div>
+    `;
+  };
+
+  const privateGate = () => shell(`
+    <div class="info-card" style="background:var(--communist-dark); color:var(--paper); border-color:var(--communist-deep);">
+      Modalita privata: passa il telefono ai Comunisti. Gli altri giocatori non devono guardare lo schermo.
+    </div>
+    <button class="btn communist" data-cp="private-ready">I Comunisti sono pronti</button>
+  `);
+
+  const renderBugging = () => {
+    const targets = state.players.map((name, i) => ({ name, i }))
+      .filter(({i}) => !state.executedPlayers.includes(i) && !hasCommunistMembership(state.roles[i].role));
+    shell(`
+      <p style="text-align:left;">Scegliete insieme una persona di cui ispezionare l'affiliazione:</p>
+      <div class="player-list" style="max-height:48vh; overflow-y:auto;">
+        ${targets.map(({name, i}) => `<button class="btn ghost small" data-cp="bug-target" data-idx="${i}">${escapeHtml(name)}</button>`).join('') || '<div class="info-card">Nessun bersaglio valido.</div>'}
+      </div>
+    `);
+  };
+
+  const renderRadicalisation = () => {
+    const targets = state.players.map((name, i) => ({ name, i, role: state.roles[i].role }))
+      .filter(({i, role}) => !state.executedPlayers.includes(i) && role !== 'hitler' && role !== 'capitalist' && !hasCommunistMembership(role));
+    shell(`
+      <p style="text-align:left;">Scegliete chi radicalizzare. Hitler, Capitalista e chi e gia Comunista non sono selezionabili.</p>
+      <div class="player-list" style="max-height:48vh; overflow-y:auto;">
+        ${targets.map(({name, i}) => `<button class="btn ghost small" data-cp="rad-target" data-idx="${i}">${escapeHtml(name)}</button>`).join('') || '<div class="info-card">Nessun bersaglio valido.</div>'}
+      </div>
+    `);
+  };
+
+  const renderCongress = () => {
+    const members = state.players.map((name, i) => ({ name, i }))
+      .filter(({i}) => !state.executedPlayers.includes(i) && hasCommunistMembership(state.roles[i].role));
+    mustFinish = true;
+    shell(`
+      <div class="info-card" style="background:var(--communist-dark); color:var(--paper); border-color:var(--communist-deep);">
+        I Comunisti attuali sono:<br><br>
+        <strong style="font-size:18px;">${members.map(({name}) => escapeHtml(name)).join('<br>')}</strong>
+      </div>
+      <button class="btn communist" data-cp="finish-congress">Ho memorizzato</button>
+    `, false);
+  };
+
+  const renderConfession = () => {
+    const idx = state.pendingCommunistPresident;
+    if (idx === null || idx === undefined || !state.roles[idx]) {
+      const alive = state.players.map((name, i) => ({name, i})).filter(({i}) => !state.executedPlayers.includes(i));
+      shell(`
+        <p style="text-align:left;">Seleziona il Presidente in carica:</p>
+        <div class="player-list">${alive.map(({name, i}) => `<button class="btn ghost small" data-cp="conf-president" data-idx="${i}">${escapeHtml(name)}</button>`).join('')}</div>
+      `);
+      return;
+    }
+    const membership = partyMembership(state.roles[idx].role);
+    mustFinish = true;
+    shell(`
+      <p>${escapeHtml(state.players[idx])}, Presidente in carica, rivela pubblicamente:</p>
+      <div class="role-card" style="background:${membership.color}; color:var(--paper); margin:16px 0;">
+        <div class="role-name">${membership.label}</div>
+        <div class="role-desc">Affiliazione politica</div>
+      </div>
+      <button class="btn communist" data-cp="finish-confession">Affiliazione rivelata</button>
+    `, false);
+  };
+
+  if (power === 'five-year') {
+    shell(`
+      <p style="text-align:left;">Il telefono terra il conto delle carte aggiunte al mazzo.</p>
+      <div class="info-card"><strong>+2 politiche Comuniste<br>+1 politica Liberale</strong><br>Rimescola il mazzo di pesca.</div>
+      <button class="btn communist" data-cp="finish-five-year">Registra il Piano</button>
+    `);
+  } else if (power === 'confession') {
+    renderConfession();
+  } else {
+    privateGate();
+  }
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => {
+    const button = e.target.closest('[data-cp]');
+    if (!button) {
+      if (e.target === modal && !mustFinish) modal.remove();
+      return;
+    }
+    const action = button.dataset.cp;
+    if (action === 'cancel') { modal.remove(); return; }
+    if (action === 'private-ready') {
+      if (power === 'bugging') renderBugging();
+      else if (power === 'radicalisation') renderRadicalisation();
+      else if (power === 'congress') renderCongress();
+      return;
+    }
+    if (action === 'bug-target') {
+      const idx = parseInt(button.dataset.idx);
+      const membership = partyMembership(state.roles[idx].role);
+      mustFinish = true;
+      shell(`
+        <p>Affiliazione di <strong>${escapeHtml(state.players[idx])}</strong>:</p>
+        <div class="role-card" style="background:${membership.color}; color:var(--paper); margin:16px 0;">
+          <div class="role-name">${membership.label}</div>
+          <div class="role-desc">Non mostrare agli altri giocatori</div>
+        </div>
+        <button class="btn communist" data-cp="finish-bugging">Memorizzato</button>
+      `, false);
+      return;
+    }
+    if (action === 'finish-bugging') {
+      finishCommunistPower(modal, power, 'affiliazione ispezionata in privato.');
+      return;
+    }
+    if (action === 'rad-target') {
+      const idx = parseInt(button.dataset.idx);
+      radicalisedIdx = idx;
+      mustFinish = true;
+      shell(`
+        <div class="info-card">Radicalizzazione registrata. Nascondi lo schermo e passa il telefono a <strong>${escapeHtml(state.players[idx])}</strong>.</div>
+        <button class="btn communist" data-cp="show-radicalised" data-idx="${idx}">Telefono consegnato</button>
+      `, false);
+      return;
+    }
+    if (action === 'show-radicalised') {
+      const idx = parseInt(button.dataset.idx);
+      shell(`
+        <p>Messaggio privato per <strong>${escapeHtml(state.players[idx])}</strong>:</p>
+        <div class="role-card communist" style="margin:16px 0;">
+          <div class="role-name">ORA SEI COMUNISTA</div>
+          <div class="role-desc">La tua affiliazione e cambiata. Mantienila segreta.</div>
+        </div>
+        <button class="btn communist" data-cp="finish-radicalisation">Ho capito</button>
+      `, false);
+      return;
+    }
+    if (action === 'finish-radicalisation') {
+      if (radicalisedIdx !== null) state.roles[radicalisedIdx] = { role: 'communist' };
+      addHistory(`<strong>${POWER_LABELS[power]}</strong>: un giocatore e stato radicalizzato in segreto. Tutti ricontrollano il proprio ruolo.`, 'communist-power');
+      state.pendingCommunistPower = null;
+      state.pendingCommunistPresident = null;
+      state.roleRefreshInProgress = true;
+      state.reveal = { idx: 0, shown: false };
+      state.screen = 'pass-reveal';
+      modal.remove();
+      saveGame();
+      render();
+      return;
+    }
+    if (action === 'finish-congress') {
+      finishCommunistPower(modal, power, 'i Comunisti si sono riconosciuti in privato.');
+      return;
+    }
+    if (action === 'conf-president') {
+      state.pendingCommunistPresident = parseInt(button.dataset.idx);
+      renderConfession();
+      return;
+    }
+    if (action === 'finish-confession') {
+      const idx = state.pendingCommunistPresident;
+      const membership = partyMembership(state.roles[idx].role);
+      finishCommunistPower(modal, power, `${escapeHtml(state.players[idx])} ha rivelato affiliazione ${membership.label}.`);
+      return;
+    }
+    if (action === 'finish-five-year') {
+      state.communistDeckAdditions.communist += 2;
+      state.communistDeckAdditions.liberal += 1;
+      state.policyDeck.push('communist', 'communist', 'liberal');
+      shuffleArray(state.policyDeck);
+      finishCommunistPower(modal, power, 'registrate +2 politiche Comuniste e +1 Liberale nel mazzo; mazzo rimescolato.');
+    }
+  });
+}
+
+function completeFascistPower(power, historyText) {
+  addHistory(`<strong>${POWER_LABELS[power]}</strong>: ${historyText}`, 'fascist-power');
+  state.pendingFascistPower = null;
+  saveGame();
+  render();
+}
+
+function showFascistPowerModal(power) {
+  if (!power || state.pendingFascistPower !== power) return;
+
+  if (power === 'kill' || power === 'kill+veto') {
+    showExecutionModal(false, 'Presidente', () => {
+      if (power === 'kill+veto') state.vetoUnlocked = true;
+      completeFascistPower(power, power === 'kill+veto' ? 'esecuzione completata; potere di Veto attivo.' : 'esecuzione completata.');
+    });
+    return;
+  }
+
+  const modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  let privateView = false;
+  let examined = [];
+  const shell = (body, cancellable = true) => {
+    modal.innerHTML = `
+      <div class="modal" style="max-height:88vh; overflow-y:auto;">
+        <h3>${POWER_LABELS[power]}</h3>
+        ${body}
+        ${cancellable ? '<button class="btn ghost" data-fp="cancel">Chiudi e completa dopo</button>' : ''}
+      </div>
+    `;
+  };
+  const privateGate = () => shell(`
+    <div class="info-card" style="background:var(--fascist-deep); color:var(--paper); border-color:var(--gold);">Passa il telefono al Presidente. La schermata seguente e privata.</div>
+    <button class="btn fascist" data-fp="private-ready">Il Presidente e pronto</button>
+  `);
+  const renderInvestigation = () => {
+    const alive = state.players.map((name, i) => ({name, i})).filter(({i}) => !state.executedPlayers.includes(i));
+    shell(`
+      <div class="player-list">${alive.map(({name, i}) => `<button class="btn ghost small" data-fp="investigate" data-idx="${i}">${escapeHtml(name)}</button>`).join('')}</div>
+    `, false);
+  };
+  const renderSpecialElection = () => {
+    const alive = state.players.map((name, i) => ({name, i})).filter(({i}) => !state.executedPlayers.includes(i));
+    shell(`
+      <div class="player-list">${alive.map(({name, i}) => `<button class="btn ghost small" data-fp="special-president" data-idx="${i}">${escapeHtml(name)}</button>`).join('')}</div>
+    `);
+  };
+  const renderExamine = () => {
+    ensurePolicyCards(3);
+    examined = state.policyDeck.slice(-3).reverse();
+    shell(`
+      <div class="policy-hand">${examined.map(type => renderPolicyCard(type)).join('')}</div>
+      <button class="btn fascist" data-fp="finish-examine">Memorizzato</button>
+    `, false);
+  };
+
+  if (power === 'special_election') renderSpecialElection();
+  else privateGate();
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => {
+    const button = e.target.closest('[data-fp]');
+    if (!button) { if (e.target === modal && !privateView) modal.remove(); return; }
+    const action = button.dataset.fp;
+    if (action === 'cancel' && !privateView) { modal.remove(); return; }
+    if (action === 'private-ready') {
+      privateView = true;
+      if (power === 'investigate') renderInvestigation(); else renderExamine();
+      return;
+    }
+    if (action === 'investigate') {
+      const idx = parseInt(button.dataset.idx);
+      const membership = partyMembership(state.roles[idx].role);
+      shell(`
+        <p>Affiliazione di <strong>${escapeHtml(state.players[idx])}</strong>:</p>
+        <div class="role-card" style="background:${membership.color}; color:var(--paper); margin:16px 0;">
+          <div class="role-name">${membership.label}</div>
+          <div class="role-desc">Informazione privata del Presidente</div>
+        </div>
+        <button class="btn fascist" data-fp="finish-investigate">Memorizzato</button>
+      `, false);
+      return;
+    }
+    if (action === 'finish-investigate') {
+      modal.remove(); completeFascistPower(power, 'affiliazione esaminata in privato.'); return;
+    }
+    if (action === 'special-president') {
+      const idx = parseInt(button.dataset.idx);
+      modal.remove(); completeFascistPower(power, `${escapeHtml(state.players[idx])} e stato scelto come prossimo Presidente.`); return;
+    }
+    if (action === 'finish-examine') {
+      modal.remove(); completeFascistPower(power, 'le prossime 3 politiche sono state esaminate in privato.');
+    }
+  });
+}
+
+function showPowerScriptModal(power) {
+  const script = POWER_SCRIPTS[power];
+  if (!script) return;
+  const modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  modal.innerHTML = `
+    <div class="modal" style="max-height:85vh; overflow-y:auto;">
+      <h3>${POWER_LABELS[power]} — Script Notte</h3>
+      <div class="power-script">
+        <p style="margin-bottom:8px;">Leggi ad alta voce, lentamente:</p>
+        <ol>${script.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ol>
+      </div>
+      <button class="btn fascist" data-modal-close>Chiudi</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => {
+    if (e.target === modal || e.target.hasAttribute('data-modal-close')) modal.remove();
+  });
+}
+
+function showExecutionModal(fromEmergency = false, role = 'Presidente', onExecuted = null) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  const alive = state.players.map((p, i) => ({ p, i })).filter(({i}) => !state.executedPlayers.includes(i));
+  modal.innerHTML = `
+    <div class="modal" style="max-height:85vh; overflow-y:auto;">
+      <h3>${fromEmergency ? `Execution (${role})` : 'Esecuzione'}</h3>
+      <p style="text-align:left; font-size:13px;">Scegli il giocatore da eseguire. Se è Hitler, i Liberali (e Comunisti) vincono.</p>
+      <div class="player-list" style="max-height:50vh; overflow-y:auto;">
+        ${alive.map(({p, i}) => `
+          <button class="btn ghost small" data-exec-idx="${i}" style="display:block; width:100%; text-align:left; margin-bottom:4px;">${i+1}. ${escapeHtml(p)}</button>
+        `).join('')}
+      </div>
+      <button class="btn ghost" data-modal-close>Annulla</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => {
+    const idx = e.target.dataset.execIdx;
+    if (idx !== undefined) {
+      executePlayer(parseInt(idx));
+      if (onExecuted) onExecuted(parseInt(idx));
+      modal.remove();
+      render();
+      return;
+    }
+    if (e.target === modal || e.target.hasAttribute('data-modal-close')) modal.remove();
+  });
+}
+
+function showMarkedForExecutionModal(role) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  const alive = state.players.map((p, i) => ({ p, i })).filter(({i}) => !state.executedPlayers.includes(i));
+  modal.innerHTML = `
+    <div class="modal" style="max-height:85vh; overflow-y:auto;">
+      <h3>Marked for Execution (${role})</h3>
+      <p style="text-align:left; font-size:13px;">Il target verrà ucciso dopo 3 ulteriori politiche fasciste promulgate. Solo un giocatore alla volta.</p>
+      <div class="player-list" style="max-height:50vh; overflow-y:auto;">
+        ${alive.map(({p, i}) => `
+          <button class="btn ghost small" data-mark-idx="${i}" style="display:block; width:100%; text-align:left; margin-bottom:4px;">${i+1}. ${escapeHtml(p)}</button>
+        `).join('')}
+      </div>
+      <button class="btn ghost" data-modal-close>Annulla</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => {
+    const idx = e.target.dataset.markIdx;
+    if (idx !== undefined) {
+      state.markedForExecution = parseInt(idx);
+      addHistory(`<strong>Marked for Execution</strong> da ${role}: 🎯 ${escapeHtml(state.players[parseInt(idx)])} (esecuzione dopo 3 politiche fasciste)`, 'system');
+      modal.remove();
+      saveGame();
+      render();
+      return;
+    }
+    if (e.target === modal || e.target.hasAttribute('data-modal-close')) modal.remove();
+  });
+}
+
+function showSocialDemModal() {
+  const modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  modal.innerHTML = `
+    <div class="modal">
+      <h3>Social-Democratica</h3>
+      <p style="text-align:left;">Il Presidente sceglie da quale tracker rimuovere 1 politica:</p>
+      <button class="btn fascist" data-sd="fascist">Rimuovi da Fascista (${state.fascistPolicies})</button>
+      ${state.xl.communists ? `<button class="btn communist" data-sd="communist">Rimuovi da Comunista (${state.communistPolicies})</button>` : ''}
+      <button class="btn ghost" data-modal-close>Annulla</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => {
+    const target = e.target.dataset.sd;
+    if (target === 'fascist') {
+      state.fascistPolicies = Math.max(0, state.fascistPolicies - 1);
+      addHistory(`Social-Dem: -1 politica Fascista`, 'system');
+      modal.remove(); saveGame(); render(); return;
+    }
+    if (target === 'communist') {
+      state.communistPolicies = Math.max(0, state.communistPolicies - 1);
+      addHistory(`Social-Dem: -1 politica Comunista`, 'system');
+      modal.remove(); saveGame(); render(); return;
+    }
+    if (e.target === modal || e.target.hasAttribute('data-modal-close')) modal.remove();
+  });
+}
+
+function executePlayer(idx) {
+  if (state.executedPlayers.includes(idx)) return;
+  state.executedPlayers.push(idx);
+  const role = state.roles[idx].role;
+  const name = state.players[idx];
+  addHistory(`<strong>Esecuzione</strong>: ⚰ ${escapeHtml(name)}`, 'system');
+  // Se ucciso era Hitler
+  if (role === 'hitler') {
+    let winner = 'liberal';
+    if (state.xl.communists) winner = 'communist'; // i comunisti vincono insieme ai liberali, ma "primario" è chi ha forzato l'azione — semplifichiamo: comunisti se attivi
+    // Mostriamo doppia vittoria nel reason
+    endGame(winner, 'Hitler assassinato' + (state.xl.communists ? ' (Liberali + Comunisti vincono)' : ''));
+    return;
+  }
+  // Se ucciso era Capitalista: +1 carta comunista nel mazzo (avvisiamo)
+  if (role === 'capitalist') {
+    state.policyDeck.push('communist');
+    shuffleArray(state.policyDeck);
+    addHistory(`Il Capitalista è morto: aggiungete una politica comunista al mazzo e rimescolate.`, 'system');
+  }
+  // Pulisci marker
+  if (state.markedForExecution === idx) state.markedForExecution = null;
+  saveGame();
+}
+
+function showMenuModal() {
+  const modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  const xl = state.xl;
+  modal.innerHTML = `
+    <div class="modal" style="max-height:85vh; overflow-y:auto;">
+      <h3>Menu Partita</h3>
+      <button class="btn ghost" data-menu="rules">Regole Rapide</button>
+      <button class="btn ghost" data-menu="show-exec">⚰ Gestisci esecuzioni</button>
+      <div class="section-label">Termina Manualmente</div>
+      <button class="btn liberal" data-menu="end-liberal">Vittoria Liberale</button>
+      <button class="btn fascist" data-menu="end-fascist">Vittoria Fascista</button>
+      ${xl.communists ? `<button class="btn communist" data-menu="end-communist">Vittoria Comunista</button>` : ''}
+      ${xl.capitalist ? `<button class="btn ghost" data-menu="end-capitalist">Vittoria Capitalista</button>` : ''}
+      ${xl.anarchist ? `<button class="btn anarchist" data-menu="end-anarchist">Vittoria Anarchico</button>` : ''}
+      ${xl.monarchist ? `<button class="btn ghost" data-menu="end-monarchist">Vittoria Monarchico</button>` : ''}
+      <div class="section-label">Altro</div>
+      <button class="btn fascist" data-menu="reset">Nuova Partita</button>
+      <button class="btn ghost" data-modal-close>Annulla</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => {
+    const action = e.target.dataset.menu;
+    if (e.target === modal || e.target.hasAttribute('data-modal-close')) {
+      modal.remove();
+      return;
+    }
+    if (action === 'rules') { modal.remove(); showRulesModal(); return; }
+    if (action === 'show-exec') { modal.remove(); showExecutionModal(); return; }
+    const endActions = {
+      'end-liberal': ['liberal', 'Vittoria Liberale manuale'],
+      'end-fascist': ['fascist', 'Vittoria Fascista manuale'],
+      'end-communist': ['communist', 'Vittoria Comunista manuale'],
+      'end-capitalist': ['capitalist', 'Vittoria Capitalista manuale'],
+      'end-anarchist': ['anarchist', 'Vittoria Anarchico manuale'],
+      'end-monarchist': ['monarchist', 'Vittoria Monarchico manuale'],
+    };
+    if (endActions[action]) {
+      const [w, r] = endActions[action];
+      if (confirm(`Confermi vittoria ${w}?`)) { endGame(w, r); modal.remove(); render(); }
+      return;
+    }
+    if (action === 'reset') {
+      if (confirm('Iniziare una nuova partita? Tutti i dati verranno persi.')) {
+        resetGame();
+        state.screen = 'setup';
+        modal.remove();
+        render();
+      }
+    }
+  });
+}
+
+// ----- UTIL -----
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ----- BOOT -----
+render();
+
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+// Avoid pull-to-refresh in standalone mode.
+document.addEventListener('touchmove', e => {
+  if (e.target.closest('input, select, textarea')) return;
+}, { passive: true });
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "id": "./",
+  "name": "Secret Hitler Companion",
+  "short_name": "SH Companion",
+  "description": "Companion digitale per Secret Hitler e Secret Hitler XL.",
+  "lang": "it",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1a1612",
+  "theme_color": "#1a1612",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/apple-touch-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
