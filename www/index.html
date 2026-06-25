@@ -2055,8 +2055,8 @@ function renderVote() {
 }
 
 const POLICY_META = {
-  liberal: { label: 'LIBERALE', symbol: '★' },
-  fascist: { label: 'FASCISTA', symbol: '⚡' },
+  liberal: { label: 'LIBERALE', symbol: '\uD83D\uDD4A\uFE0F' },
+  fascist: { label: 'FASCISTA', symbol: '\u2620\uFE0F' },
   communist: { label: 'COMUNISTA', symbol: '☭' },
   anarchist: { label: 'ANARCHICA', symbol: 'Ⓐ' },
   'anti-fascist': { label: 'ANTI-FASCISTA', symbol: '−F' },
@@ -3366,9 +3366,9 @@ function showCommunistPowerModal(power) {
 
   const renderRadicalisation = () => {
     const targets = state.players.map((name, i) => ({ name, i, role: state.roles[i].role }))
-      .filter(({i, role}) => !state.executedPlayers.includes(i) && role !== 'hitler' && role !== 'capitalist' && !hasCommunistMembership(role));
+      .filter(({i, role}) => !state.executedPlayers.includes(i) && !hasCommunistMembership(role));
     shell(`
-      <p style="text-align:left;">Scegliete chi radicalizzare. Hitler, Capitalista e chi e gia Comunista non sono selezionabili.</p>
+      <p style="text-align:left;">Scegliete chi radicalizzare. La lista include anche eventuali bersagli non convertibili: l'app non rivela chi siano.</p>
       <div class="player-list" style="max-height:48vh; overflow-y:auto;">
         ${targets.map(({name, i}) => `<button class="btn ghost small" data-cp="rad-target" data-idx="${i}">${escapeHtml(name)}</button>`).join('') || '<div class="info-card">Nessun bersaglio valido.</div>'}
       </div>
@@ -3422,6 +3422,24 @@ function showCommunistPowerModal(power) {
     privateGate();
   }
 
+  const resolveRadicalisation = () => {
+    if (radicalisedIdx !== null) {
+      const role = state.roles[radicalisedIdx]?.role;
+      if (role !== 'hitler' && role !== 'capitalist' && !hasCommunistMembership(role)) {
+        state.roles[radicalisedIdx] = { role: 'communist' };
+      }
+    }
+    addHistory(`<strong>${POWER_LABELS[power]}</strong>: la Radicalizzazione e stata risolta in segreto. Tutti ricontrollano il proprio ruolo.`, 'communist-power');
+    state.pendingCommunistPower = null;
+    state.pendingCommunistPresident = null;
+    state.roleRefreshInProgress = true;
+    state.reveal = { idx: 0, shown: false };
+    state.screen = 'pass-reveal';
+    modal.remove();
+    saveGame();
+    render();
+  };
+
   document.body.appendChild(modal);
   modal.addEventListener('click', e => {
     const button = e.target.closest('[data-cp]');
@@ -3458,36 +3476,11 @@ function showCommunistPowerModal(power) {
     if (action === 'rad-target') {
       const idx = parseInt(button.dataset.idx);
       radicalisedIdx = idx;
-      mustFinish = true;
-      shell(`
-        <div class="info-card">Radicalizzazione registrata. Nascondi lo schermo e passa il telefono a <strong>${escapeHtml(state.players[idx])}</strong>.</div>
-        <button class="btn communist" data-cp="show-radicalised" data-idx="${idx}">Telefono consegnato</button>
-      `, false);
-      return;
-    }
-    if (action === 'show-radicalised') {
-      const idx = parseInt(button.dataset.idx);
-      shell(`
-        <p>Messaggio privato per <strong>${escapeHtml(state.players[idx])}</strong>:</p>
-        <div class="role-card communist" style="margin:16px 0;">
-          <div class="role-name">ORA SEI COMUNISTA</div>
-          <div class="role-desc">La tua affiliazione e cambiata. Mantienila segreta.</div>
-        </div>
-        <button class="btn communist" data-cp="finish-radicalisation">Ho capito</button>
-      `, false);
+      resolveRadicalisation();
       return;
     }
     if (action === 'finish-radicalisation') {
-      if (radicalisedIdx !== null) state.roles[radicalisedIdx] = { role: 'communist' };
-      addHistory(`<strong>${POWER_LABELS[power]}</strong>: un giocatore e stato radicalizzato in segreto. Tutti ricontrollano il proprio ruolo.`, 'communist-power');
-      state.pendingCommunistPower = null;
-      state.pendingCommunistPresident = null;
-      state.roleRefreshInProgress = true;
-      state.reveal = { idx: 0, shown: false };
-      state.screen = 'pass-reveal';
-      modal.remove();
-      saveGame();
-      render();
+      resolveRadicalisation();
       return;
     }
     if (action === 'finish-congress') {
