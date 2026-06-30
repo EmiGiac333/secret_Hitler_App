@@ -14,6 +14,25 @@ function addPlayer() {
   render();
 }
 
+function showCountdownThenRole() {
+  const overlay = document.createElement('div');
+  overlay.className = 'countdown-overlay';
+  document.body.appendChild(overlay);
+  let n = 3;
+  const tick = () => {
+    overlay.innerHTML = `<div class="countdown-number">${n}</div><div class="countdown-hint">Tieni il telefono nascosto…</div>`;
+    if (n <= 0) {
+      overlay.remove();
+      state.screen = 'role-reveal';
+      render();
+      return;
+    }
+    n--;
+    setTimeout(tick, 800);
+  };
+  tick();
+}
+
 function castNextSecretVote(vote) {
   if (multiplayer.connected && multiplayer.gameStarted) {
     if (multiplayer.voteSubmitted) return false;
@@ -30,9 +49,10 @@ function castNextSecretVote(vote) {
     multiplayer.voteSubmitted = true;
     return true;
   }
-  const idx = state.players.findIndex((_, i) => !state.executedPlayers.includes(i) && state.votes[i] === undefined);
-  if (idx < 0) return false;
-  state.votes[idx] = vote;
+  const nextIdx = state.players.findIndex((_, i) => !state.executedPlayers.includes(i) && state.votes[i] === undefined);
+  if (nextIdx < 0 || state.currentVoterIdx !== nextIdx) return false;
+  state.votes[nextIdx] = vote;
+  state.currentVoterIdx = null;
   saveGame();
   return true;
 }
@@ -74,7 +94,8 @@ function handleAction(e) {
   const action = el.dataset.action;
 
   if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost &&
-      !['tab', 'cast-secret-vote', 'online-role-ready', 'leave-online-room', 'home'].includes(action)) return;
+      !['tab', 'cast-secret-vote', 'online-role-ready', 'leave-online-room', 'home',
+        'president-discard', 'chancellor-enact', 'request-veto', 'refuse-veto', 'approve-veto'].includes(action)) return;
 
   switch (action) {
     case 'online-menu':
@@ -108,6 +129,10 @@ function handleAction(e) {
 
     case 'leave-online-room':
       leaveOnlineRoom();
+      break;
+
+    case 'rejoin-room':
+      rejoinOnlineRoom();
       break;
 
     case 'online-role-ready':
@@ -181,8 +206,7 @@ function handleAction(e) {
       break;
 
     case 'show-role':
-      state.screen = 'role-reveal';
-      render();
+      showCountdownThenRole();
       break;
 
     case 'hide-role':
@@ -266,6 +290,7 @@ function handleAction(e) {
 
     case 'clear-votes':
       state.votes = {};
+      state.currentVoterIdx = null;
       saveGame();
       render();
       break;
@@ -274,11 +299,17 @@ function handleAction(e) {
       if (castNextSecretVote(el.dataset.v)) render();
       break;
 
+    case 'confirm-voter':
+      state.currentVoterIdx = parseInt(el.dataset.voterIdx);
+      render();
+      break;
+
     case 'confirm-election': {
       const ja   = Object.values(state.votes).filter(v => v === 'ja').length;
       const nein = Object.values(state.votes).filter(v => v === 'nein').length;
       addHistory(`<strong>Governo eletto</strong> (${ja} Ja / ${nein} Nein)`, 'system');
       state.votes = {};
+      state.currentVoterIdx = null;
       multiplayer.voteSubmitted = false;
       multiplayer.voteResult    = null;
       if (state.useDigitalPolicyDeck) beginLegislativeSession();
@@ -301,6 +332,7 @@ function handleAction(e) {
         prepareChaosPolicy();
       }
       state.votes = {};
+      state.currentVoterIdx = null;
       multiplayer.voteSubmitted = false;
       multiplayer.voteResult    = null;
       nextTurn();
@@ -330,19 +362,36 @@ function handleAction(e) {
       break;
 
     case 'president-discard': {
-      if (!state.legislative || state.legislative.cards.length !== 3) return;
       const idx = parseInt(el.dataset.idx);
+      if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost && multiplayer.legislativeRole === 'president') {
+        if (multiplayer.hostConnection?.open) multiplayer.hostConnection.send({ type: 'president-discard', idx });
+        multiplayer.legislativeCards = null;
+        multiplayer.legislativeRole  = null;
+        state.screen = 'game'; state.tab = 'board';
+        render();
+        return;
+      }
+      if (!state.legislative || state.legislative.cards.length !== 3) return;
       const discarded = state.legislative.cards.splice(idx, 1)[0];
       state.discardPile.push(discarded);
-      state.screen = 'legislative-pass-chancellor';
+      if (multiplayer.connected && multiplayer.gameStarted && multiplayer.isHost) routeLegislativeToChancellor();
+      else state.screen = 'legislative-pass-chancellor';
       saveGame();
       render();
       break;
     }
 
     case 'chancellor-enact': {
-      if (!state.legislative || state.legislative.cards.length !== 2) return;
       const idx = parseInt(el.dataset.idx);
+      if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost && multiplayer.legislativeRole === 'chancellor') {
+        if (multiplayer.hostConnection?.open) multiplayer.hostConnection.send({ type: 'chancellor-enact', idx });
+        multiplayer.legislativeCards = null;
+        multiplayer.legislativeRole  = null;
+        state.screen = 'game'; state.tab = 'board';
+        render();
+        return;
+      }
+      if (!state.legislative || state.legislative.cards.length !== 2) return;
       state.revealedPolicy       = state.legislative.cards[idx];
       state.revealedPolicySource = 'legislative';
       state.discardPile.push(state.legislative.cards[1 - idx]);
@@ -354,19 +403,41 @@ function handleAction(e) {
     }
 
     case 'request-veto':
+      if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost && multiplayer.legislativeRole === 'chancellor') {
+        if (multiplayer.hostConnection?.open) multiplayer.hostConnection.send({ type: 'request-veto' });
+        multiplayer.legislativeCards = null;
+        multiplayer.legislativeRole  = null;
+        state.screen = 'game'; state.tab = 'board';
+        render();
+        return;
+      }
       if (!state.vetoUnlocked || !state.legislative || state.legislative.cards.length !== 2) return;
-      state.screen = 'legislative-veto-president';
+      if (multiplayer.connected && multiplayer.gameStarted && multiplayer.isHost) routeVetoToPresident();
+      else state.screen = 'legislative-veto-president';
       saveGame();
       render();
       break;
 
     case 'refuse-veto':
-      state.screen = 'legislative-chancellor';
+      if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost) {
+        if (multiplayer.hostConnection?.open) multiplayer.hostConnection.send({ type: 'veto-decision', approved: false });
+        state.screen = 'game'; state.tab = 'board';
+        render();
+        return;
+      }
+      if (multiplayer.connected && multiplayer.gameStarted && multiplayer.isHost) routeLegislativeToChancellor();
+      else state.screen = 'legislative-chancellor';
       saveGame();
       render();
       break;
 
-    case 'approve-veto':
+    case 'approve-veto': {
+      if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost) {
+        if (multiplayer.hostConnection?.open) multiplayer.hostConnection.send({ type: 'veto-decision', approved: true });
+        state.screen = 'game'; state.tab = 'board';
+        render();
+        return;
+      }
       if (!state.legislative || state.legislative.cards.length !== 2) return;
       state.discardPile.push(...state.legislative.cards);
       state.legislative    = null;
@@ -379,6 +450,7 @@ function handleAction(e) {
       saveGame();
       render();
       break;
+    }
 
     case 'apply-revealed-policy': {
       if (!state.revealedPolicy) return;
@@ -393,24 +465,6 @@ function handleAction(e) {
       render();
       break;
     }
-
-    case 'timer-set':
-      stopTimer();
-      state.timer.seconds   = parseInt(el.dataset.sec);
-      state.timer.remaining = state.timer.seconds;
-      render();
-      break;
-
-    case 'timer-toggle':
-      if (state.timer.running) stopTimer(); else startTimer();
-      render();
-      break;
-
-    case 'timer-reset':
-      stopTimer();
-      state.timer.remaining = state.timer.seconds;
-      render();
-      break;
 
     case 'menu':             showMenuModal(); break;
     case 'show-power-script': showPowerScriptModal(el.dataset.power); break;

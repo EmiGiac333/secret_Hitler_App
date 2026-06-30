@@ -25,9 +25,16 @@ function renderHome() {
 }
 
 function renderOnlineMenu() {
+  let rejoinSession = null;
+  try { rejoinSession = JSON.parse(sessionStorage.getItem('sh_rejoin') || 'null'); } catch (_) {}
+
   return `
     <div class="screen">
       <div class="title-stack"><h1>Partita Online</h1><div class="subtitle">— Peer to Peer —</div></div>
+      ${rejoinSession ? `
+        <div class="info-card">Eri connesso alla stanza <strong>${escapeHtml(rejoinSession.code)}</strong> come <strong>${escapeHtml(rejoinSession.name)}</strong>.</div>
+        <button class="btn fascist" data-action="rejoin-room">↻ Rientra nella stanza</button>
+        <div class="section-label">Oppure</div>` : ''}
       <div class="role-pick">
         <label>IL TUO NOME</label>
         <input id="online-name" type="text" maxlength="20" placeholder="Nome giocatore" value="${escapeHtml(multiplayer.playerName)}">
@@ -264,12 +271,10 @@ function renderGame() {
         <button class="tab ${state.tab === 'board'   ? 'active' : ''}" data-action="tab" data-tab="board">Board</button>
         <button class="tab ${state.tab === 'vote'    ? 'active' : ''}" data-action="tab" data-tab="vote">Voto</button>
         <button class="tab ${state.tab === 'history' ? 'active' : ''}" data-action="tab" data-tab="history">Storia</button>
-        <button class="tab ${state.tab === 'timer'   ? 'active' : ''}" data-action="tab" data-tab="timer">Timer</button>
       </div>
       ${state.tab === 'board'   ? renderBoard()   : ''}
       ${state.tab === 'vote'    ? renderVote()    : ''}
       ${state.tab === 'history' ? renderHistory() : ''}
-      ${state.tab === 'timer'   ? renderTimer()   : ''}
       <button class="btn ghost small" data-action="menu" style="margin-top:24px;">Menu Partita</button>
     </div>`;
 }
@@ -554,12 +559,29 @@ function renderVote() {
   }
 
   const leftToVote = aliveCount - jaCount - neinCount;
-  return `
-    ${govHeader}
+  const nextIdx = state.players.findIndex((_, i) => !state.executedPlayers.includes(i) && state.votes[i] === undefined);
+  const progressCard = `
     <div class="info-card" style="font-size:12px;">
       Passa il telefono a ogni giocatore — ognuno vota in segreto.<br>
       <strong>${jaCount + neinCount}/${aliveCount}</strong> voti registrati · <strong>${leftToVote}</strong> mancanti
-    </div>
+    </div>`;
+
+  if (nextIdx < 0) return `${govHeader}${progressCard}`;
+
+  if (state.currentVoterIdx !== nextIdx) {
+    return `
+      ${govHeader}
+      ${progressCard}
+      <div class="pass-screen">
+        <h2>Passa il telefono a</h2>
+        <div class="player-name">${escapeHtml(state.players[nextIdx])}</div>
+      </div>
+      <button class="btn liberal" data-action="confirm-voter" data-voter-idx="${nextIdx}">Sono ${escapeHtml(state.players[nextIdx])}</button>`;
+  }
+
+  return `
+    ${govHeader}
+    ${progressCard}
     <div class="solo-vote-screen">
       <div class="ballot-poster">
         <div class="ballot-seal">✦</div>
@@ -593,23 +615,25 @@ function renderLegislativePass(role) {
 }
 
 function renderLegislativePresident() {
-  const cards = state.legislative?.cards || [];
+  const isRoutedGuest = multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost && multiplayer.legislativeRole === 'president';
+  const cards = isRoutedGuest ? (multiplayer.legislativeCards || []) : (state.legislative?.cards || []);
   return `
     <div class="screen legislative-screen">
       <div class="title-stack"><h1>Presidente</h1><div class="subtitle">— Scarta una politica —</div></div>
       <div class="policy-hand">${cards.map((type, i) => renderPolicyCard(type, 'president-discard', i)).join('')}</div>
-      <div class="deck-counter">Mazzo ${state.policyDeck.length} · Scarti ${state.discardPile.length}</div>
+      ${!isRoutedGuest ? `<div class="deck-counter">Mazzo ${state.policyDeck.length} · Scarti ${state.discardPile.length}</div>` : ''}
     </div>`;
 }
 
 function renderLegislativeChancellor() {
-  const cards = state.legislative?.cards || [];
+  const isRoutedGuest = multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost && multiplayer.legislativeRole === 'chancellor';
+  const cards = isRoutedGuest ? (multiplayer.legislativeCards || []) : (state.legislative?.cards || []);
   return `
     <div class="screen legislative-screen">
       <div class="title-stack"><h1>Cancelliere</h1><div class="subtitle">— Promulga una politica —</div></div>
       <div class="policy-hand two">${cards.map((type, i) => renderPolicyCard(type, 'chancellor-enact', i)).join('')}</div>
       ${state.vetoUnlocked ? '<button class="btn ghost" data-action="request-veto">Richiedi Veto</button>' : ''}
-      <div class="deck-counter">Mazzo ${state.policyDeck.length} · Scarti ${state.discardPile.length}</div>
+      ${!isRoutedGuest ? `<div class="deck-counter">Mazzo ${state.policyDeck.length} · Scarti ${state.discardPile.length}</div>` : ''}
     </div>`;
 }
 
@@ -655,26 +679,6 @@ function renderHistory() {
         <div class="turn-body">${h.body}</div>
       </div>`;
   }).join('');
-}
-
-function renderTimer() {
-  const t   = state.timer;
-  const min = Math.floor(t.remaining / 60).toString().padStart(2, '0');
-  const sec = (t.remaining % 60).toString().padStart(2, '0');
-  const warning = t.remaining <= 10 && t.running;
-  return `
-    <div class="timer-display ${warning ? 'warning' : ''}">${min}:${sec}</div>
-    <div class="policy-controls">
-      <button class="btn ghost small" data-action="timer-set" data-sec="60">1 min</button>
-      <button class="btn ghost small" data-action="timer-set" data-sec="120">2 min</button>
-      <button class="btn ghost small" data-action="timer-set" data-sec="180">3 min</button>
-      <button class="btn ghost small" data-action="timer-set" data-sec="300">5 min</button>
-    </div>
-    <button class="btn ${t.running ? 'fascist' : 'liberal'}" data-action="timer-toggle">
-      ${t.running ? '⏸ Pausa' : '▶ Avvia'}
-    </button>
-    <button class="btn ghost" data-action="timer-reset">↻ Reset</button>
-    <div class="info-card">Usa il timer per la discussione o per limitare il tempo di scelta delle politiche.</div>`;
 }
 
 function renderEnd() {

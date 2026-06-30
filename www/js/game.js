@@ -111,9 +111,78 @@ function beginLegislativeSession() {
   state.legislative = { cards };
   state.revealedPolicy = null;
   state.revealedPolicySource = null;
-  state.screen = 'legislative-pass-president';
+  if (multiplayer.connected && multiplayer.gameStarted && multiplayer.isHost) {
+    routeLegislativeToPresident();
+  } else {
+    state.screen = 'legislative-pass-president';
+  }
   saveGame();
   return true;
+}
+
+// Host-only: send the 3 legislative cards to the President's own device,
+// or show them locally if the host itself is President.
+function routeLegislativeToPresident() {
+  const presIdx = state.president;
+  const cards = state.legislative.cards;
+  if (presIdx === multiplayer.playerIndex) {
+    state.screen = 'legislative-president';
+    multiplayer.legislativeWaiting = null;
+    return;
+  }
+  const player = multiplayer.players[presIdx];
+  const conn = player && multiplayer.connections.get(player.id);
+  if (conn && conn.open) {
+    conn.send({ type: 'legislative-president', cards });
+    multiplayer.legislativeWaiting = 'president';
+    state.screen = 'game';
+    state.tab = 'board';
+  } else {
+    state.screen = 'legislative-pass-president';
+  }
+}
+
+// Host-only: send the 2 remaining legislative cards to the Chancellor's own device,
+// or show them locally if the host itself is Chancellor.
+function routeLegislativeToChancellor() {
+  const chanIdx = state.chancellor;
+  const cards = state.legislative.cards;
+  if (chanIdx === multiplayer.playerIndex) {
+    state.screen = 'legislative-chancellor';
+    multiplayer.legislativeWaiting = null;
+    return;
+  }
+  const player = multiplayer.players[chanIdx];
+  const conn = player && multiplayer.connections.get(player.id);
+  if (conn && conn.open) {
+    conn.send({ type: 'legislative-chancellor', cards });
+    multiplayer.legislativeWaiting = 'chancellor';
+    state.screen = 'game';
+    state.tab = 'board';
+  } else {
+    state.screen = 'legislative-pass-chancellor';
+  }
+}
+
+// Host-only: send a veto request to the President's own device,
+// or show it locally if the host itself is President.
+function routeVetoToPresident() {
+  const presIdx = state.president;
+  if (presIdx === multiplayer.playerIndex) {
+    state.screen = 'legislative-veto-president';
+    multiplayer.legislativeWaiting = null;
+    return;
+  }
+  const player = multiplayer.players[presIdx];
+  const conn = player && multiplayer.connections.get(player.id);
+  if (conn && conn.open) {
+    conn.send({ type: 'legislative-veto-president' });
+    multiplayer.legislativeWaiting = 'veto-president';
+    state.screen = 'game';
+    state.tab = 'board';
+  } else {
+    state.screen = 'legislative-veto-president';
+  }
 }
 
 function prepareChaosPolicy() {
@@ -133,6 +202,7 @@ function nextTurn() {
   state.president = null;
   state.chancellor = null;
   state.votes = {};
+  state.currentVoterIdx = null;
   state.governmentConfirmed = false;
 }
 
@@ -172,6 +242,7 @@ function resetGame() {
   state.prevPresident = null;
   state.prevChancellor = null;
   state.votes = {};
+  state.currentVoterIdx = null;
   state.pendingFascistPower = null;
   state.pendingCommunistPower = null;
   state.pendingCommunistPresident = null;
@@ -308,26 +379,4 @@ function computeEmergencyPool() {
   extra = Math.min(6, extra);
   state.emergencyArticle48 = Math.min(3, Math.ceil(extra / 2));
   state.emergencyEnabling  = Math.min(3, Math.floor(extra / 2));
-}
-
-// ===== TIMER =====
-
-function startTimer() {
-  if (state.timer.running) return;
-  state.timer.running = true;
-  state.timerInterval = setInterval(() => {
-    state.timer.remaining--;
-    if (state.timer.remaining <= 0) {
-      state.timer.remaining = 0;
-      stopTimer();
-      try { if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]); } catch (e) {}
-    }
-    if (state.tab === 'timer') render();
-  }, 1000);
-}
-
-function stopTimer() {
-  state.timer.running = false;
-  if (state.timerInterval) clearInterval(state.timerInterval);
-  state.timerInterval = null;
 }

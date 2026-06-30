@@ -75,7 +75,7 @@ function showSecretVoteModal(idx) {
   document.body.appendChild(modal);
   modal.addEventListener('click', e => {
     const btn = e.target.closest('[data-sv]');
-    if (!btn) { if (e.target === modal && !votingStarted) modal.remove(); return; }
+    if (!btn) return;
     const action = btn.dataset.sv;
     if (action === 'cancel' && !votingStarted) { modal.remove(); return; }
     if (action === 'ready') {
@@ -250,7 +250,7 @@ function showCommunistPowerModal(power) {
   document.body.appendChild(modal);
   modal.addEventListener('click', e => {
     const btn = e.target.closest('[data-cp]');
-    if (!btn) { if (e.target === modal && !mustFinish) modal.remove(); return; }
+    if (!btn) return;
     const action = btn.dataset.cp;
     if (action === 'cancel') { modal.remove(); return; }
     if (action === 'private-ready') {
@@ -353,7 +353,7 @@ function showFascistPowerModal(power) {
   document.body.appendChild(modal);
   modal.addEventListener('click', e => {
     const btn = e.target.closest('[data-fp]');
-    if (!btn) { if (e.target === modal && !privateView) modal.remove(); return; }
+    if (!btn) return;
     const action = btn.dataset.fp;
     if (action === 'cancel' && !privateView) { modal.remove(); return; }
     if (action === 'private-ready') { privateView = true; if (power === 'investigate') renderInvestigation(); else renderExamine(); return; }
@@ -419,7 +419,7 @@ function showExecutionModal(fromEmergency = false, role = 'Presidente', onExecut
       render();
       return;
     }
-    if (e.target === modal || e.target.hasAttribute('data-modal-close')) modal.remove();
+    if (e.target.hasAttribute('data-modal-close')) modal.remove();
   });
 }
 
@@ -445,7 +445,7 @@ function showMarkedForExecutionModal(role) {
       modal.remove(); saveGame(); render();
       return;
     }
-    if (e.target === modal || e.target.hasAttribute('data-modal-close')) modal.remove();
+    if (e.target.hasAttribute('data-modal-close')) modal.remove();
   });
 }
 
@@ -473,7 +473,7 @@ function showSocialDemModal() {
       addHistory('Social-Dem: -1 politica Comunista', 'system');
       modal.remove(); saveGame(); render(); return;
     }
-    if (e.target === modal || e.target.hasAttribute('data-modal-close')) modal.remove();
+    if (e.target.hasAttribute('data-modal-close')) modal.remove();
   });
 }
 
@@ -499,7 +499,7 @@ function showMenuModal() {
     </div>`;
   document.body.appendChild(modal);
   modal.addEventListener('click', e => {
-    if (e.target === modal || e.target.hasAttribute('data-modal-close')) { modal.remove(); return; }
+    if (e.target.hasAttribute('data-modal-close')) { modal.remove(); return; }
     const action = e.target.dataset.menu;
     if (action === 'rules')     { modal.remove(); showRulesModal(); return; }
     if (action === 'show-exec') { modal.remove(); showExecutionModal(); return; }
@@ -526,6 +526,6 @@ function showMenuModal() {
 function _attachModal(modal) {
   document.body.appendChild(modal);
   modal.addEventListener('click', e => {
-    if (e.target === modal || e.target.hasAttribute('data-modal-close')) modal.remove();
+    if (e.target.hasAttribute('data-modal-close')) modal.remove();
   });
 }

@@ -32,8 +32,6 @@ const state = {
   history: [],
   reveal: { idx: 0, shown: false },
   roleRefreshInProgress: false,
-  timer: { running: false, seconds: 60, remaining: 60 },
-  timerInterval: null,
   xl: {
     communists: false,
     capitalist: false,
@@ -53,6 +51,7 @@ const state = {
   governmentConfirmed: false,
   endResult: null,
   endReason: null,
+  currentVoterIdx: null,
 };
 
 const multiplayer = {
@@ -71,6 +70,9 @@ const multiplayer = {
   voteSubmitted: false,
   voteResult: null,
   error: '',
+  legislativeCards: null,
+  legislativeRole: null,
+  legislativeWaiting: null,
 };
 
 // ===== PERSISTENCE =====
@@ -172,6 +174,9 @@ function applyPublicGameSnapshot(snapshot) {
   state.discardPile = Array(snapshot.discardCount    || 0).fill('hidden');
   multiplayer.voteResult = snapshot.voteResult || null;
   if (previousResult && !multiplayer.voteResult) multiplayer.voteSubmitted = false;
+  const routedScreens = ['legislative-president', 'legislative-chancellor', 'legislative-veto-president'];
   if (state.endResult) state.screen = 'end';
-  else if (state.screen !== 'online-role') { state.screen = 'game'; state.tab = state.tab || 'board'; }
+  else if (state.screen !== 'online-role' && !(multiplayer.legislativeRole && routedScreens.includes(state.screen))) {
+    state.screen = 'game'; state.tab = state.tab || 'board';
+  }
 }
