@@ -1,11 +1,20 @@
-const CACHE_NAME = 'secret-hitler-pwa-v2';
+﻿const CACHE_NAME = 'secret-hitler-pwa-v3';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './vendor/peerjs.min.js',
+  './css/style.css',
+  './js/config.js',
+  './js/state.js',
+  './js/game.js',
+  './js/multiplayer.js',
+  './js/render.js',
+  './js/modals.js',
+  './js/handlers.js',
+  './js/app.js',
   './icons/icon.svg',
-  './icons/apple-touch-icon.png'
+  './icons/apple-touch-icon.png',
 ];
 
 self.addEventListener('install', event => {
@@ -47,3 +56,4 @@ self.addEventListener('fetch', event => {
     }))
   );
 });
+

@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Secret Hitler App",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "www", "--no-clipboard"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}
