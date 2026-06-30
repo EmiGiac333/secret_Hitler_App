@@ -12,6 +12,7 @@ const APP_SHELL = [
   './js/render.js',
   './js/modals.js',
   './js/handlers.js',
+  './js/animations.js',
   './js/app.js',
   './icons/icon.svg',
   './icons/apple-touch-icon.png',

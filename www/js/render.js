@@ -6,7 +6,7 @@ function renderHome() {
   return `
     <div class="screen">
       <div class="title-stack">
-        <h1>Secret Hitler</h1>
+        <h1 class="glitch">Secret Hitler</h1>
         <div class="subtitle">— Companion App —</div>
       </div>
       <div class="info-card">

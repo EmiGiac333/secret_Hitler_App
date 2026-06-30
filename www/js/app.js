@@ -41,17 +41,23 @@ function render() {
     setTimeout(() => {
       app.innerHTML = content;
       attachHandlers();
+      initAnimations(state.screen);
+      const wasEnd = _lastScreen !== 'end' && state.screen === 'end';
       _lastScreen = state.screen;
 
       requestAnimationFrame(() => {
         app.style.opacity   = '1';
         app.style.transform = 'translateY(0)';
-        setTimeout(() => { _transitioning = false; }, 150);
+        setTimeout(() => {
+          _transitioning = false;
+          if (wasEnd && state.endResult) showConfetti(state.endResult);
+        }, 150);
       });
     }, 100);
   } else {
     app.innerHTML = content;
     attachHandlers();
+    initAnimations(state.screen);
     _lastScreen = state.screen;
   }
 }
