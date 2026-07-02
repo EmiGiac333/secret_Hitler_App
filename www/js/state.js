@@ -162,7 +162,9 @@ function publicGameSnapshot() {
 }
 
 function applyPublicGameSnapshot(snapshot) {
-  const previousResult = multiplayer.voteResult;
+  const previousResult   = multiplayer.voteResult;
+  const prevGovConfirmed = state.governmentConfirmed;
+  const prevPresident    = state.president;
   const fields = [
     'players', 'liberalPolicies', 'fascistPolicies', 'communistPolicies', 'anarchistOnCommunistTracker',
     'liberalSlotsTotal', 'electionTracker', 'turn', 'history', 'xl', 'pendingFascistPower',
@@ -178,5 +180,10 @@ function applyPublicGameSnapshot(snapshot) {
   if (state.endResult) state.screen = 'end';
   else if (state.screen !== 'online-role' && !(multiplayer.legislativeRole && routedScreens.includes(state.screen))) {
     state.screen = 'game'; state.tab = state.tab || 'board';
+    // Bring the active step into view on meaningful transitions.
+    if (state.governmentConfirmed !== prevGovConfirmed || state.president !== prevPresident ||
+        (multiplayer.voteResult && !previousResult)) {
+      state.tab = 'vote';
+    }
   }
 }

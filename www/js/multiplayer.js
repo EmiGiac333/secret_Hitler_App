@@ -43,6 +43,9 @@ function privateRoleInfo(idx) {
 function sendOnlineGameStart() {
   multiplayer.gameStarted = true;
   multiplayer.playerIndex = 0;
+  advanceOnlinePresidency(null);
+  state.chancellor = null;
+  state.governmentConfirmed = false;
   const own = privateRoleInfo(0);
   multiplayer.privateRole  = own.role;
   multiplayer.knownPlayers = own.known;
@@ -77,6 +80,30 @@ function handleHostData(conn, data) {
       saveGame();
       broadcastGameState();
     }
+  } else if (data.type === 'nominate' && multiplayer.gameStarted) {
+    const idx = multiplayer.players.findIndex(p => p.id === conn.peer);
+    if (idx !== state.president || state.governmentConfirmed) return;
+    const chIdx = parseInt(data.chancellor);
+    if (isNaN(chIdx) || chIdx === idx || state.executedPlayers.includes(chIdx)) return;
+    state.chancellor = chIdx;
+    state.governmentConfirmed = true;
+    state.votes = {};
+    state.currentVoterIdx = null;
+    multiplayer.voteSubmitted = false;
+    saveGame();
+    broadcastGameState();
+    render();
+  } else if (data.type === 'advance-round' && multiplayer.gameStarted) {
+    const idx = multiplayer.players.findIndex(p => p.id === conn.peer);
+    if (idx !== state.president) return;
+    const alive = state.players.length - state.executedPlayers.length;
+    const ja    = Object.values(state.votes).filter(v => v === 'ja').length;
+    const nein  = Object.values(state.votes).filter(v => v === 'nein').length;
+    if (alive <= 0 || ja + nein !== alive) return;
+    if (data.decision === 'reject') resolveElectionReject();
+    else resolveElectionConfirm();
+    broadcastGameState();
+    render();
   } else if (data.type === 'president-discard' && multiplayer.gameStarted) {
     const idx = multiplayer.players.findIndex(p => p.id === conn.peer);
     if (idx !== state.president || !state.legislative || state.legislative.cards.length !== 3) return;

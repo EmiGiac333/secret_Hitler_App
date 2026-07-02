@@ -94,7 +94,8 @@ function handleAction(e) {
   const action = el.dataset.action;
 
   if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost &&
-      !['tab', 'cast-secret-vote', 'online-role-ready', 'leave-online-room', 'home',
+      !['tab', 'cast-secret-vote', 'confirm-voter', 'online-role-ready', 'leave-online-room', 'home',
+        'nominate-chancellor', 'confirm-election', 'reject-election',
         'president-discard', 'chancellor-enact', 'request-veto', 'refuse-veto', 'approve-veto'].includes(action)) return;
 
   switch (action) {
@@ -304,39 +305,42 @@ function handleAction(e) {
       render();
       break;
 
+    case 'nominate-chancellor': {
+      if (!(multiplayer.connected && multiplayer.gameStarted)) return;
+      if (multiplayer.playerIndex !== state.president || state.governmentConfirmed) return;
+      const chIdx = parseInt(el.dataset.idx);
+      if (isNaN(chIdx) || chIdx === state.president || state.executedPlayers.includes(chIdx)) return;
+      if (multiplayer.isHost) {
+        state.chancellor = chIdx;
+        state.governmentConfirmed = true;
+        state.votes = {};
+        state.currentVoterIdx = null;
+        multiplayer.voteSubmitted = false;
+        saveGame();
+        broadcastGameState();
+        render();
+      } else if (multiplayer.hostConnection?.open) {
+        multiplayer.hostConnection.send({ type: 'nominate', chancellor: chIdx });
+      }
+      break;
+    }
+
     case 'confirm-election': {
-      const ja   = Object.values(state.votes).filter(v => v === 'ja').length;
-      const nein = Object.values(state.votes).filter(v => v === 'nein').length;
-      addHistory(`<strong>Governo eletto</strong> (${ja} Ja / ${nein} Nein)`, 'system');
-      state.votes = {};
-      state.currentVoterIdx = null;
-      multiplayer.voteSubmitted = false;
-      multiplayer.voteResult    = null;
-      if (state.useDigitalPolicyDeck) beginLegislativeSession();
-      else state.screen = 'post-election-choice';
-      saveGame();
+      if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost) {
+        if (multiplayer.hostConnection?.open) multiplayer.hostConnection.send({ type: 'advance-round', decision: 'confirm' });
+        return;
+      }
+      resolveElectionConfirm();
       render();
       break;
     }
 
     case 'reject-election': {
-      const ja   = Object.values(state.votes).filter(v => v === 'ja').length;
-      const nein = Object.values(state.votes).filter(v => v === 'nein').length;
-      addHistory(`<strong>Governo respinto</strong> (${ja} Ja / ${nein} Nein)`, 'system');
-      state.electionTracker = Math.min(3, state.electionTracker + 1);
-      if (state.electionTracker >= 3) {
-        addHistory('<strong>Election Tracker a 3</strong> — politica in cima al mazzo applicata.', 'system');
-        state.electionTracker = 0;
-        state.prevPresident   = null;
-        state.prevChancellor  = null;
-        prepareChaosPolicy();
+      if (multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost) {
+        if (multiplayer.hostConnection?.open) multiplayer.hostConnection.send({ type: 'advance-round', decision: 'reject' });
+        return;
       }
-      state.votes = {};
-      state.currentVoterIdx = null;
-      multiplayer.voteSubmitted = false;
-      multiplayer.voteResult    = null;
-      nextTurn();
-      saveGame();
+      resolveElectionReject();
       render();
       break;
     }

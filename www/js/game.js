@@ -197,10 +197,61 @@ function prepareChaosPolicy() {
 
 // ===== TURN MANAGEMENT =====
 
+// Online: pick the next president by rotation, skipping executed players.
+function advanceOnlinePresidency(served) {
+  const n = state.players.length;
+  state.tab = 'vote';
+  let idx = (served === null || served === undefined) ? -1 : served;
+  for (let k = 0; k < n; k++) {
+    idx = (idx + 1) % n;
+    if (!state.executedPlayers.includes(idx)) { state.president = idx; return; }
+  }
+  state.president = null;
+}
+
+// Shared by handler and host message: government approved.
+function resolveElectionConfirm() {
+  const ja   = Object.values(state.votes).filter(v => v === 'ja').length;
+  const nein = Object.values(state.votes).filter(v => v === 'nein').length;
+  addHistory(`<strong>Governo eletto</strong> (${ja} Ja / ${nein} Nein)`, 'system');
+  state.votes = {};
+  state.currentVoterIdx = null;
+  multiplayer.voteSubmitted = false;
+  multiplayer.voteResult    = null;
+  if (state.useDigitalPolicyDeck) beginLegislativeSession();
+  else state.screen = 'post-election-choice';
+  saveGame();
+}
+
+// Shared by handler and host message: government rejected.
+function resolveElectionReject() {
+  const ja   = Object.values(state.votes).filter(v => v === 'ja').length;
+  const nein = Object.values(state.votes).filter(v => v === 'nein').length;
+  addHistory(`<strong>Governo respinto</strong> (${ja} Ja / ${nein} Nein)`, 'system');
+  state.electionTracker = Math.min(3, state.electionTracker + 1);
+  if (state.electionTracker >= 3) {
+    addHistory('<strong>Election Tracker a 3</strong> — politica in cima al mazzo applicata.', 'system');
+    state.electionTracker = 0;
+    state.prevPresident   = null;
+    state.prevChancellor  = null;
+    prepareChaosPolicy();
+  }
+  state.votes = {};
+  state.currentVoterIdx = null;
+  multiplayer.voteSubmitted = false;
+  multiplayer.voteResult    = null;
+  nextTurn();
+  saveGame();
+}
+
 function nextTurn() {
+  const served = state.president;
   state.turn++;
   state.president = null;
   state.chancellor = null;
+  if (multiplayer.connected && multiplayer.gameStarted && multiplayer.isHost) {
+    advanceOnlinePresidency(served);
+  }
   state.votes = {};
   state.currentVoterIdx = null;
   state.governmentConfirmed = false;
@@ -270,8 +321,6 @@ function resetGame() {
     antiPolicies: false, socialDem: false, emergencyPowers: false,
     liberalTrackerLong: false, communistShort: false,
   };
-  stopTimer();
-  state.timer = { running: false, seconds: 60, remaining: 60 };
   try { localStorage.removeItem('sh_save'); } catch (e) {}
 }
 

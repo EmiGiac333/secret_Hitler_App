@@ -441,12 +441,30 @@ function renderEmergencyPanel() {
 }
 
 function renderGovernmentNomination() {
-  const isGuest = multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost;
-  if (isGuest) {
+  const online = multiplayer.connected && multiplayer.gameStarted;
+  if (online) {
+    const presIdx  = state.president;
+    const presName = presIdx !== null && presIdx !== undefined ? escapeHtml(state.players[presIdx]) : '—';
+    if (multiplayer.playerIndex !== presIdx) {
+      return `
+        <div class="pass-screen" style="padding:36px 16px;">
+          <h2>In attesa<span class="waiting-dots">…</span></h2>
+          <div class="instruction" style="margin-top:16px;">Il Presidente <strong>${presName}</strong> sta nominando il Cancelliere.</div>
+        </div>`;
+    }
+    const n        = state.players.length;
+    const prevGovt = n <= 6
+      ? [state.prevChancellor].filter(x => x !== null)
+      : [state.prevPresident, state.prevChancellor].filter(x => x !== null);
+    const candidates = state.players.map((p, i) => ({ p, i }))
+      .filter(({ i }) => i !== presIdx && !state.executedPlayers.includes(i) && !prevGovt.includes(i));
     return `
-      <div class="pass-screen" style="padding:36px 16px;">
-        <h2>In attesa<span class="waiting-dots">…</span></h2>
-        <div class="instruction" style="margin-top:16px;">L'host sta nominando il governo per questo turno.</div>
+      <div class="vote-setup">
+        <h3>Sei il Presidente</h3>
+        <div class="info-card" style="font-size:12px;">Nomina il tuo Cancelliere per aprire la votazione.</div>
+        <div class="player-list">
+          ${candidates.map(({ p, i }) => `<button class="btn ghost small" data-action="nominate-chancellor" data-idx="${i}" style="display:block; width:100%; margin-bottom:6px;">📜 ${escapeHtml(p)}</button>`).join('') || '<div class="info-card">Nessun candidato eleggibile.</div>'}
+        </div>
       </div>`;
   }
   const alive = state.players.map((p, i) => ({ p, i })).filter(({ i }) => !state.executedPlayers.includes(i));
@@ -494,7 +512,7 @@ function renderGovernmentNomination() {
 }
 
 function renderVote() {
-  const isGuest = multiplayer.connected && multiplayer.gameStarted && !multiplayer.isHost;
+  const online = multiplayer.connected && multiplayer.gameStarted;
 
   const govHeader = (state.president !== null && state.chancellor !== null) ? `
     <div class="govt-vote-header">
@@ -508,17 +526,38 @@ function renderVote() {
       </div>
     </div>` : '';
 
-  if (isGuest) {
-    if (multiplayer.voteResult) {
-      const r = multiplayer.voteResult;
+  if (online) {
+    if (!state.governmentConfirmed) return renderGovernmentNomination();
+
+    // Result: host computes from full votes; guests use broadcast tally.
+    let result = null;
+    if (multiplayer.isHost) {
+      const ja    = Object.values(state.votes).filter(v => v === 'ja').length;
+      const nein  = Object.values(state.votes).filter(v => v === 'nein').length;
+      const alive = state.players.length - state.executedPlayers.length;
+      if (alive > 0 && ja + nein === alive) result = { ja, nein, passed: ja > nein };
+    } else {
+      result = multiplayer.voteResult;
+    }
+
+    if (result) {
+      const amPresident = multiplayer.playerIndex === state.president;
       return `${govHeader}
         <div class="vote-tally">
-          <div class="tally-box ja"><div class="num">${r.ja}</div><div class="lbl">JA!</div></div>
-          <div class="tally-box nein"><div class="num">${r.nein}</div><div class="lbl">NEIN!</div></div>
+          <div class="tally-box ja"><div class="num">${result.ja}</div><div class="lbl">JA!</div></div>
+          <div class="tally-box nein"><div class="num">${result.nein}</div><div class="lbl">NEIN!</div></div>
         </div>
-        <div class="vote-result ${r.passed ? 'pass' : 'fail'}">${r.passed ? '✓ ELEZIONE APPROVATA' : '✗ ELEZIONE RESPINTA'}</div>`;
+        <div class="vote-result ${result.passed ? 'pass' : 'fail'}">${result.passed ? '✓ ELEZIONE APPROVATA' : '✗ ELEZIONE RESPINTA'}</div>
+        ${amPresident
+          ? (result.passed
+              ? '<button class="btn liberal" data-action="confirm-election">Conferma e Continua</button>'
+              : '<button class="btn fascist" data-action="reject-election">Avanza Election Tracker</button>')
+          : `<div class="info-card" style="font-size:12px;">Il Presidente <strong>${escapeHtml(state.players[state.president])}</strong> prosegue il turno.</div>`}`;
     }
-    if (!state.governmentConfirmed) return renderGovernmentNomination();
+
+    if (state.executedPlayers.includes(multiplayer.playerIndex)) {
+      return `${govHeader}<div class="ballot-poster"><div class="ballot-seal">☠</div><div class="ballot-headline">ELIMINATO</div><p style="font-family:var(--typewriter);font-size:13px;margin-top:12px;">Non puoi votare.</p></div>`;
+    }
     if (multiplayer.voteSubmitted) {
       return `${govHeader}<div class="ballot-poster"><div class="ballot-seal">✓</div><div class="ballot-headline">VOTO REGISTRATO</div><p style="font-family:var(--typewriter);font-size:13px;margin-top:12px;">Nascondi lo schermo e attendi gli altri.</p></div>`;
     }
