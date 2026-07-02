@@ -157,19 +157,50 @@ function handleHostData(conn, data) {
   }
 }
 
-function connectAsHost(name) {
+// ICE servers: STUN for most NATs, TURN as fallback for restrictive/mobile
+// networks where a direct P2P channel can't be established.
+const PEER_CONFIG = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'turn:openrelay.metered.ca:80',            username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:443',           username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' },
+  ],
+};
+
+function createPeer(id) {
+  const opts = { config: PEER_CONFIG };
+  return id ? new Peer(id, opts) : new Peer(opts);
+}
+
+// Keep the broker socket alive: if it drops (phone sleep, network switch),
+// reconnect so new guests can still join and rejoin works.
+function keepPeerAlive(peer) {
+  peer.on('disconnected', () => {
+    try { if (!peer.destroyed) peer.reconnect(); } catch (_) {}
+  });
+}
+
+function connectAsHost(name, attempt = 0) {
   if (typeof Peer === 'undefined') { multiplayer.error = 'Modulo rete non disponibile.'; render(); return; }
-  multiplayer.roomCode  = makeRoomCode();
   multiplayer.playerName = name;
-  multiplayer.isHost    = true;
-  multiplayer.peer      = new Peer(`sh-${multiplayer.roomCode.toLowerCase()}`);
-  multiplayer.peer.on('open', id => {
+  multiplayer.isHost     = true;
+  if (attempt === 0) multiplayer.roomCode = makeRoomCode();
+  multiplayer.error = attempt > 0 ? 'Codice occupato, ne genero un altro…' : 'Creazione stanza…';
+
+  const peer = createPeer(`sh-${multiplayer.roomCode.toLowerCase()}`);
+  multiplayer.peer = peer;
+  keepPeerAlive(peer);
+
+  peer.on('open', id => {
     multiplayer.connected = true;
-    multiplayer.players   = [{ id, name, host: true }];
+    multiplayer.error     = '';
+    multiplayer.players   = [{ id, name, host: true, connected: true }];
     state.screen = 'online-lobby';
     render();
   });
-  multiplayer.peer.on('connection', conn => {
+  peer.on('connection', conn => {
     multiplayer.connections.set(conn.peer, conn);
     conn.on('data', data => handleHostData(conn, data));
     conn.on('close', () => {
@@ -184,57 +215,92 @@ function connectAsHost(name) {
       }
     });
   });
-  multiplayer.peer.on('error', () => {
-    multiplayer.error = 'Impossibile creare la stanza. Riprova.';
+  peer.on('error', err => {
+    const type = err && err.type;
+    // Chosen room code already registered on the broker → pick a new one.
+    if (type === 'unavailable-id' && attempt < 4) {
+      try { peer.destroy(); } catch (_) {}
+      multiplayer.roomCode = makeRoomCode();
+      connectAsHost(name, attempt + 1);
+      return;
+    }
+    // Transient broker/network issues once we're already live → just reconnect.
+    if (multiplayer.connected && ['network', 'server-error', 'socket-error', 'disconnected'].includes(type)) {
+      try { if (!peer.destroyed) peer.reconnect(); } catch (_) {}
+      return;
+    }
+    multiplayer.error = 'Impossibile creare la stanza. Controlla la connessione e riprova.';
     state.screen = 'online-menu';
     render();
   });
 }
 
-function connectAsGuest(name, code) {
+function handleGuestData(data, name, code) {
+  if (data.type === 'lobby')      { multiplayer.players = data.players || []; state.screen = 'online-lobby'; render(); }
+  if (data.type === 'game-start') {
+    multiplayer.gameStarted = true; multiplayer.playerIndex = data.playerIndex;
+    multiplayer.privateRole = data.private.role; multiplayer.knownPlayers = data.private.known || [];
+    applyPublicGameSnapshot(data.snapshot); state.screen = 'online-role'; render();
+  }
+  if (data.type === 'state') { applyPublicGameSnapshot(data.snapshot); render(); }
+  if (data.type === 'legislative-president') {
+    multiplayer.legislativeCards = data.cards; multiplayer.legislativeRole = 'president';
+    state.screen = 'legislative-president'; render();
+  }
+  if (data.type === 'legislative-chancellor') {
+    multiplayer.legislativeCards = data.cards; multiplayer.legislativeRole = 'chancellor';
+    state.screen = 'legislative-chancellor'; render();
+  }
+  if (data.type === 'legislative-veto-president') {
+    multiplayer.legislativeCards = null; multiplayer.legislativeRole = null;
+    state.screen = 'legislative-veto-president'; render();
+  }
+}
+
+function connectAsGuest(name, code, attempt = 0) {
   if (typeof Peer === 'undefined') { multiplayer.error = 'Modulo rete non disponibile.'; render(); return; }
+  const MAX_ATTEMPTS = 4;
   multiplayer.roomCode   = code;
   multiplayer.playerName = name;
   multiplayer.isHost     = false;
-  multiplayer.peer       = new Peer();
-  multiplayer.peer.on('open', () => {
-    const conn = multiplayer.peer.connect(`sh-${code.toLowerCase()}`, { reliable: true });
+  multiplayer.error      = attempt > 0 ? `Riprovo la connessione… (${attempt + 1})` : 'Connessione alla stanza…';
+  render();
+
+  const peer = createPeer();
+  multiplayer.peer = peer;
+  keepPeerAlive(peer);
+
+  let done = false; // this attempt has settled (opened, retried, or failed)
+
+  const retry = () => {
+    if (done) return; done = true;
+    try { peer.destroy(); } catch (_) {}
+    if (attempt < MAX_ATTEMPTS) setTimeout(() => connectAsGuest(name, code, attempt + 1), 700);
+    else { multiplayer.error = 'Impossibile connettersi. Controlla il codice stanza e la rete, poi riprova.'; state.screen = 'online-menu'; render(); }
+  };
+
+  peer.on('open', () => {
+    const conn = peer.connect(`sh-${code.toLowerCase()}`, { reliable: true });
     multiplayer.hostConnection = conn;
+
+    // If the data channel doesn't open in time (NAT/firewall), retry.
+    const timer = setTimeout(() => { if (!done) { try { conn.close(); } catch (_) {} retry(); } }, 14000);
+
     conn.on('open', () => {
+      if (done) return; done = true;
+      clearTimeout(timer);
       multiplayer.connected = true;
+      multiplayer.error     = '';
       conn.send({ type: 'join', name });
       try { sessionStorage.setItem('sh_rejoin', JSON.stringify({ name, code })); } catch (_) {}
       state.screen = 'online-lobby';
       render();
     });
-    conn.on('data', data => {
-      if (data.type === 'lobby')      { multiplayer.players = data.players || []; state.screen = 'online-lobby'; render(); }
-      if (data.type === 'game-start') {
-        multiplayer.gameStarted = true; multiplayer.playerIndex = data.playerIndex;
-        multiplayer.privateRole = data.private.role; multiplayer.knownPlayers = data.private.known || [];
-        applyPublicGameSnapshot(data.snapshot); state.screen = 'online-role'; render();
-      }
-      if (data.type === 'state') { applyPublicGameSnapshot(data.snapshot); render(); }
-      if (data.type === 'legislative-president') {
-        multiplayer.legislativeCards = data.cards;
-        multiplayer.legislativeRole  = 'president';
-        state.screen = 'legislative-president';
-        render();
-      }
-      if (data.type === 'legislative-chancellor') {
-        multiplayer.legislativeCards = data.cards;
-        multiplayer.legislativeRole  = 'chancellor';
-        state.screen = 'legislative-chancellor';
-        render();
-      }
-      if (data.type === 'legislative-veto-president') {
-        multiplayer.legislativeCards = null;
-        multiplayer.legislativeRole  = null;
-        state.screen = 'legislative-veto-president';
-        render();
-      }
-    });
+    conn.on('data', data => handleGuestData(data, name, code));
+    conn.on('error', () => { clearTimeout(timer); retry(); });
     conn.on('close', () => {
+      clearTimeout(timer);
+      if (!multiplayer.connected) return; // never fully connected → handled by retry/timeout
       multiplayer.connected = false;
       multiplayer.error = multiplayer.gameStarted
         ? 'Connessione con l\'host interrotta. Puoi rientrare nella stanza.'
@@ -243,7 +309,21 @@ function connectAsGuest(name, code) {
       render();
     });
   });
-  multiplayer.peer.on('error', () => { multiplayer.error = 'Stanza non trovata o connessione non disponibile.'; state.screen = 'online-menu'; render(); });
+
+  peer.on('error', err => {
+    const type = err && err.type;
+    // Host id not found yet (host still registering, or brief broker lag) → retry.
+    if (['peer-unavailable', 'network', 'server-error', 'socket-error'].includes(type) && !multiplayer.connected) {
+      retry();
+      return;
+    }
+    if (!multiplayer.connected && !done) {
+      done = true;
+      multiplayer.error = 'Stanza non trovata o connessione non disponibile.';
+      state.screen = 'online-menu';
+      render();
+    }
+  });
 }
 
 function rejoinOnlineRoom() {

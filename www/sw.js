@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'secret-hitler-pwa-v5';
+﻿const CACHE_NAME = 'secret-hitler-pwa-v7';
 const APP_SHELL = [
   './',
   './index.html',

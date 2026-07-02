@@ -10,13 +10,14 @@ function renderHome() {
         <div class="subtitle">— Companion App —</div>
       </div>
       <div class="info-card">
-        Un'app per gestire le partite di <strong>Secret Hitler</strong> passandosi un solo telefono.
-        Tieni traccia di ruoli, votazioni, poteri presidenziali e cronologia dei turni.
+        Gestisci le partite di <strong>Secret Hitler</strong>: ruoli, votazioni, poteri e cronologia. Scegli come giocare.
       </div>
-      <button class="btn fascist" data-action="new-game">Nuova Partita</button>
-      <button class="btn liberal" data-action="online-menu">Partita su più dispositivi</button>
-      ${hasSavedGame() ? '<button class="btn liberal" data-action="resume-game">Riprendi Partita</button>' : ''}
-      <button class="btn ghost" data-action="rules">Regole Rapide</button>
+      ${hasSavedGame() ? '<button class="btn liberal" data-action="resume-game">▶ Riprendi Partita</button>' : ''}
+      <button class="btn fascist" data-action="new-game">📱 Un solo telefono</button>
+      <div class="btn-hint">Passate un unico telefono tra i giocatori</div>
+      <button class="btn liberal" data-action="online-menu">📶 Più dispositivi</button>
+      <div class="btn-hint">Ognuno usa il proprio telefono, collegati in rete</div>
+      <button class="btn ghost" data-action="rules">📖 Regole Rapide</button>
       <div class="section-label">5 – 20 Giocatori · XL</div>
       <div style="text-align:center; font-family:var(--typewriter); font-size:11px; color:var(--gold); opacity:0.7; margin-top:24px; line-height:1.6;">
         Berlino · 1932<br>★ ★ ★
@@ -37,15 +38,17 @@ function renderOnlineMenu() {
         <div class="section-label">Oppure</div>` : ''}
       <div class="role-pick">
         <label>IL TUO NOME</label>
-        <input id="online-name" type="text" maxlength="20" placeholder="Nome giocatore" value="${escapeHtml(multiplayer.playerName)}">
+        <input id="online-name" type="text" maxlength="20" placeholder="Es. Marco" value="${escapeHtml(multiplayer.playerName)}">
       </div>
-      <button class="btn fascist" data-action="create-online-room">Crea stanza</button>
-      <div class="section-label">Oppure entra</div>
+      <button class="btn fascist" data-action="create-online-room">➕ Crea una stanza</button>
+      <div class="btn-hint">Diventi l'host e ottieni un codice da condividere</div>
+      <div class="section-label">Oppure unisciti</div>
       <div class="role-pick">
         <label>CODICE STANZA</label>
         <input id="online-room-code" type="text" maxlength="6" placeholder="ABC123" style="text-transform:uppercase;">
       </div>
-      <button class="btn liberal" data-action="join-online-room">Entra nella stanza</button>
+      <button class="btn liberal" data-action="join-online-room">🔑 Entra nella stanza</button>
+      <div class="btn-hint">Inserisci nome e codice ricevuto dall'host</div>
       ${multiplayer.error ? `<div class="info-card" style="background:var(--fascist);color:var(--paper);">${escapeHtml(multiplayer.error)}</div>` : ''}
       <button class="btn ghost" data-action="home">Indietro</button>
     </div>`;
@@ -91,14 +94,27 @@ function renderOnlineRole() {
     communist: ['communist', 'COMUNISTA'], capitalist: ['capitalist', 'CAPITALISTA'],
     anarchist: ['anarchist', 'ANARCHICO'], monarchist: ['monarchist', 'MONARCHICO'],
   }[role] || ['liberal', String(role).toUpperCase()];
+  const objectives = {
+    liberal:   'Difendi la democrazia: approva le politiche liberali o elimina Hitler.',
+    fascist:   'Sabota in segreto: approva 6 politiche fasciste o fai eleggere Hitler Cancelliere.',
+    hitler:    'Nasconditi tra i Liberali. Fatti eleggere Cancelliere dopo la 3ª fascista.',
+    communist: 'Riempi il tracker comunista o assassina Hitler con i Liberali.',
+    capitalist:'Vinci se né Comunisti né Anarchico vincono.',
+    anarchist: state.xl.communists ? 'Squadra Comunisti: vinci con 2 politiche anarchiche o uccidendo Hitler.' : 'Fai promulgare una politica anarchica via election tracker.',
+    monarchist:'Fai vincere i Fascisti SENZA Hitler Cancelliere. Perdi se Hitler muore.',
+  };
   return `
     <div class="screen">
       <div class="role-card ${data[0]}">
-        <div class="role-label">Il tuo ruolo</div>
+        <div class="role-label">Il tuo ruolo segreto</div>
         <div class="role-name">${data[1]}</div>
-        ${multiplayer.knownPlayers.length ? `<div class="fellow-fascists"><strong>Conosci</strong>${multiplayer.knownPlayers.map(escapeHtml).join('<br>')}</div>` : ''}
+        <div class="role-desc">${objectives[role] || ''}</div>
+        ${multiplayer.knownPlayers.length ? `<div class="fellow-fascists"><strong>I tuoi alleati</strong>${multiplayer.knownPlayers.map(escapeHtml).join('<br>')}</div>` : ''}
       </div>
-      <button class="btn ghost" data-action="online-role-ready">Ho memorizzato</button>
+      <div class="info-card" style="background:var(--ink); color:var(--gold); border-color:var(--gold); font-size:12px;">
+        🔒 Solo tu vedi questa schermata. Memorizza e continua.
+      </div>
+      <button class="btn ghost" data-action="online-role-ready">Ho memorizzato — Pronto</button>
     </div>`;
 }
 
@@ -260,16 +276,70 @@ function renderRoleReveal() {
     </div>`;
 }
 
+function currentPhaseInfo() {
+  if (state.endResult) return null;
+  const online = multiplayer.connected && multiplayer.gameStarted;
+
+  if (online) {
+    const me       = multiplayer.playerIndex;
+    const presName = state.president !== null && state.president !== undefined ? escapeHtml(state.players[state.president]) : '—';
+    if (multiplayer.legislativeWaiting) {
+      const who = multiplayer.legislativeWaiting === 'chancellor' ? 'del Cancelliere'
+                : multiplayer.legislativeWaiting === 'veto-president' ? 'del Presidente (veto)'
+                : 'del Presidente';
+      return { text: `Sessione legislativa — in attesa ${who}`, cta: false };
+    }
+    if (!state.governmentConfirmed) {
+      if (me === state.president) return { text: 'Sei il Presidente — nomina il Cancelliere', cta: true };
+      return { text: `${presName} sta nominando il governo`, cta: false };
+    }
+    if (multiplayer.isHost) {
+      const ja    = Object.values(state.votes).filter(v => v === 'ja').length;
+      const nein  = Object.values(state.votes).filter(v => v === 'nein').length;
+      const alive = state.players.length - state.executedPlayers.length;
+      if (alive > 0 && ja + nein === alive) {
+        return me === state.president
+          ? { text: 'Voto concluso — conferma il risultato', cta: true }
+          : { text: `Voto concluso — ${presName} prosegue`, cta: false };
+      }
+    } else if (multiplayer.voteResult) {
+      return me === state.president
+        ? { text: 'Voto concluso — conferma il risultato', cta: true }
+        : { text: `Voto concluso — ${presName} prosegue`, cta: false };
+    }
+    if (state.executedPlayers.includes(me)) return { text: 'Sei stato eliminato — attendi', cta: false };
+    if (multiplayer.voteSubmitted || state.votes[me] !== undefined) return { text: 'Voto registrato — attendi gli altri', cta: false };
+    return { text: 'Votazione in corso — tocca per votare', cta: true };
+  }
+
+  // Single device
+  if (!state.governmentConfirmed) return { text: 'Nomina Presidente e Cancelliere', cta: true };
+  const ja    = Object.values(state.votes).filter(v => v === 'ja').length;
+  const nein  = Object.values(state.votes).filter(v => v === 'nein').length;
+  const alive = state.players.length - state.executedPlayers.length;
+  if (ja + nein < alive) return { text: `Votazione — ${ja + nein}/${alive} voti espressi`, cta: true };
+  return { text: 'Voto completo — conferma il risultato', cta: true };
+}
+
 function renderGame() {
+  const phase  = currentPhaseInfo();
+  const banner = phase ? `
+    <div class="status-banner ${phase.cta ? 'cta' : ''}" ${phase.cta ? 'data-action="tab" data-tab="vote"' : ''}>
+      <span class="status-banner-text">${phase.text}</span>
+      ${phase.cta && state.tab !== 'vote' ? '<span class="status-banner-go">Voto →</span>' : ''}
+    </div>` : '';
+  const voteDot = phase && phase.cta && state.tab !== 'vote' ? '<span class="tab-dot"></span>' : '';
+
   return `
     <div class="screen">
       <div class="title-stack">
         <h1>Turno ${state.turn + 1}</h1>
         <div class="subtitle">— ${state.players.length} Giocatori —</div>
       </div>
+      ${banner}
       <div class="tab-bar">
         <button class="tab ${state.tab === 'board'   ? 'active' : ''}" data-action="tab" data-tab="board">Board</button>
-        <button class="tab ${state.tab === 'vote'    ? 'active' : ''}" data-action="tab" data-tab="vote">Voto</button>
+        <button class="tab ${state.tab === 'vote'    ? 'active' : ''}" data-action="tab" data-tab="vote">Voto${voteDot}</button>
         <button class="tab ${state.tab === 'history' ? 'active' : ''}" data-action="tab" data-tab="history">Storia</button>
       </div>
       ${state.tab === 'board'   ? renderBoard()   : ''}
